@@ -1,0 +1,14 @@
+node_modules/
+output/
+audio/
+assets/*.mp4
+assets/*.mp3
+*.mp4
+*.mp3
+*.wav
+.DS_Store
+remotion-project/node_modules/
+remotion-project/.cache/
+remotion-project/public/audio/
+ai-summit-video/out/
+remotion-project/out/
