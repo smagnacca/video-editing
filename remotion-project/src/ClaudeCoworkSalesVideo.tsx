@@ -472,15 +472,15 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
           {(() => {
             const lf = frame - 430;
             const items = [
-              { text: 'Researching prospects',      startAt: 50  },
-              { text: 'Sorting through emails',     startAt: 90  },
-              { text: 'Writing follow-ups',         startAt: 130 },
-              { text: 'Updating your CRM',          startAt: 170 },
-              { text: 'Building pipeline reports',  startAt: 210 },
+              { text: 'Researching prospects',      startAt: 110 },
+              { text: 'Sorting through emails',     startAt: 150 },
+              { text: 'Writing follow-ups',         startAt: 190 },
+              { text: 'Updating your CRM',          startAt: 230 },
+              { text: 'Building pipeline reports',  startAt: 270 },
             ];
             const fadeOut = interpolate(lf, [580, 616], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
             return (
-              <div style={{ opacity: fadeOut, position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 28 }}>
+              <div style={{ opacity: fadeOut, position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
                 <FadeIn delay={2}>
                   <div style={{ fontSize: 22, fontFamily: '-apple-system, sans-serif', fontWeight: 700, color: '#888', letterSpacing: 4, textTransform: 'uppercase' as const, marginBottom: 8 }}>
                     Before and after every sales call...
@@ -599,7 +599,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
             return (
               <div style={{ opacity: fadeOut, position: 'absolute', inset: 0 }}>
                 {/* Left column — text */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '55%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
                   <SceneLabel number="Number One" title="Connect Your Inbox" color="#00d4ff" delay={4} />
 
                   {[
@@ -636,7 +636,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
                 </div>
 
                 {/* Right column — Claude Cowork mock UI */}
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '42%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '48%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px' }}>
                   <SlideIn delay={20} from="right" style={{ width: '100%' }}>
                     <MockUIWindow scene={4} localFrame={lf} />
                   </SlideIn>
@@ -659,7 +659,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
             return (
               <div style={{ opacity: fadeOut, position: 'absolute', inset: 0 }}>
                 {/* Left column */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '55%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 28 }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 28 }}>
                   <SceneLabel number="Number Two" title="Automate Your Pipeline" color="#f5a623" delay={4} />
 
                   <SlideIn delay={60} from="left">
@@ -695,7 +695,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
                 </div>
 
                 {/* Right column — Claude Cowork mock UI */}
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '42%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '48%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px' }}>
                   <SlideIn delay={20} from="right" style={{ width: '100%' }}>
                     <MockUIWindow scene={5} localFrame={lf} />
                   </SlideIn>
@@ -723,7 +723,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
             return (
               <div style={{ opacity: fadeOut, position: 'absolute', inset: 0 }}>
                 {/* Left column */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '55%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
                   <SceneLabel number="Number Three" title="Sales Plugins" color="#f5a623" delay={4} />
 
                   <FadeIn delay={30}>
@@ -768,7 +768,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
                 </div>
 
                 {/* Right column — Claude Cowork mock UI */}
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '42%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '48%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px' }}>
                   <SlideIn delay={20} from="right" style={{ width: '100%' }}>
                     <MockUIWindow scene={6} localFrame={lf} />
                   </SlideIn>
@@ -797,7 +797,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
             return (
               <div style={{ opacity: fadeOut, position: 'absolute', inset: 0 }}>
                 {/* Left column */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '55%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 80, gap: 24 }}>
                   <SceneLabel number="Number Four" title="Build Your Own Skill" color="#00d4ff" delay={4} />
 
                   <FadeIn delay={30}>
@@ -842,7 +842,7 @@ export const ClaudeCoworkSalesVideo: React.FC<{ audioSrc?: string }> = ({ audioS
                 </div>
 
                 {/* Right column — Claude Cowork mock UI */}
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '42%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '48%', bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px' }}>
                   <SlideIn delay={20} from="right" style={{ width: '100%' }}>
                     <MockUIWindow scene={7} localFrame={lf} />
                   </SlideIn>

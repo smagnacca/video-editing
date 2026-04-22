@@ -2,6 +2,36 @@
 
 ---
 
+## 2026-04-21 — Claude Cowork Sales Video (4 Render Iterations) + New Video Wizard
+
+**Outputs:**
+- `output/claude-cowork-sales-draft.mp4` through `output/claude-cowork-sales-v4.mp4` (20–22MB each, 1920×1080)
+- `output/3-types-of-people-4.7.26-v2-final.mp4` + `v3-final.mp4` (44–46MB, carryover from Apr 7 session)
+- `output/invisible-sign-v7-final.mp4` (25MB)
+- `output/storyselling-ai-4.7.26-v2-final.mp4` (26MB)
+
+### What was done
+- Wrote full 9-scene script for "The AI Co-Worker Built for Salespeople" targeting salespeople
+  - Hook: "Only 35% of your day is actually selling" (stat count-up)
+  - 4 feature archetypes: Connect Inbox, Automate Pipeline, Sales Plugins, Build Your Own Skill
+  - Bridge + CTA → scottmagnacca.com
+- Generated audio: `audio/claude-cowork-salesperson-clean.mp3` + normalized version
+- Built `remotion-project/src/ClaudeCoworkSalesVideo.tsx` (958 lines) — designated gold-standard template for all future videos
+- Iterated 4 renders: draft → v2 → v3 → v4 (final at 20MB, ~8:29 PM)
+- Committed entire project repo (96 files, ~35K lines) to GitHub as canonical reference: `7758d3f`
+- Created `templates/NEW-VIDEO-WIZARD.md` — 7 intake questions + 6-step execution protocol targeting ≤10 min to production-quality Draft 1: `13ec10f`
+
+### Key decisions
+- `ClaudeCoworkSalesVideo.tsx` established as the reference template for all new Remotion compositions
+- New Video Wizard protocol: ask all 7 intake questions at once before starting any work
+
+### Status
+- v4 is the last render — session ended without a formal QA pass or CHANGELOG entry
+- No known blocking issues logged; may need visual review of v4 before calling it final
+- CHANGELOG was not updated during session (logged now retroactively)
+
+---
+
 ## 2026-04-20 — 15 Minute Sales Sprint Promo v7 + Reusable Pipeline Template
 
 **Output:** `output/15-minute-sales-sprint-v7-FINAL.mp4` (17MB, 113s, 1920×1080 30fps)
