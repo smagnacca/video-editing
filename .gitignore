@@ -12,3 +12,4 @@ remotion-project/.cache/
 remotion-project/public/audio/
 ai-summit-video/out/
 remotion-project/out/
+.claude/worktrees/
