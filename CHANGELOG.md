@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-04-22 — Claude Cowork Sales Video v5 FINAL + Production Excellence Rules
+
+**Output:** `output/claude-cowork-sales-FINAL.mp4` (14.9MB, 3:20, 1920×1080 30fps)
+- Intro (23s) + Content v5 (2:36) + Outro (21s) spliced via ffmpeg filter_complex
+
+### Fixes applied (v4 → v5)
+- Scene 2 strikethrough timing: items delayed 60 frames (~2s) so graphics follow narrator (was ahead at :18, now correct at :20)
+- Scene 2 list gap reduced: 28px → 16px (tighter, no black gap in center)
+- Scenes 4–7 right panels: width 42%→48%, padding 28px→8px (+~14% larger on screen)
+- Scenes 4–7 left panels: width 55%→50% (rebalanced to maintain visual balance)
+
+### Session work
+- Logged Apr 21 session retroactively in CHANGELOG
+- Created `memory/production_excellence_rules.md` — 14-section validated reference for first-render quality
+- Saved production excellence rules to persistent memory (survives across sessions)
+- Fixed broken Claude Code worktree committed to git (removed from .git/config, added .claude/worktrees/ to .gitignore)
+- ffmpeg QuickTime compatibility fix: added `-profile:v high -level:v 4.0 -colorspace bt709 -tag:v avc1`
+
+### Grade
+Scott approved v5: "This is perfect." FINAL approved: "Looks pretty good."
+
+---
+
 ## 2026-04-21 — Claude Cowork Sales Video (4 Render Iterations) + New Video Wizard
 
 **Outputs:**
