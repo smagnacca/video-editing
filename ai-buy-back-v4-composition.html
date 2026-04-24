@@ -279,7 +279,8 @@ canvas#particles { position:absolute; top:0; left:0; z-index:0; }
 .cta-btn{display:inline-block;background:linear-gradient(135deg,#f5a623 0%,#ffcc44 50%,#f5a623 100%);
   background-size:200% auto;color:#060a14;font-size:38px;font-weight:900;
   padding:24px 68px;border-radius:50px;letter-spacing:1px;position:relative;overflow:hidden;
-  opacity:0;animation:fadeUp .7s ease 179.8s forwards,ctaBtnPulse 2s ease-in-out 180.5s infinite,shimmer 2.5s linear 180.5s infinite;}
+  opacity:0;animation:fadeUp .7s ease 179.8s forwards,ctaBtnPulse 2s ease-in-out 180.5s infinite,shimmer 2.5s linear 180.5s infinite;
+  text-decoration:none;cursor:pointer;}
 .cta-btn::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
   animation:ctaBtnShimmer 2.2s ease 180.5s infinite;}
@@ -581,7 +582,7 @@ canvas#particles { position:absolute; top:0; left:0; z-index:0; }
         <div class="step-label">Do the Work<br>That Matters</div>
       </div>
     </div>
-    <div class="cta-btn">Take the 60-Second AI Quiz →</div>
+    <a class="cta-btn" href="https://60-second-ai-quiz.netlify.app/" target="_blank" rel="noopener">Take the 60-Second AI Quiz →</a>
   </div>
 </div>
 
