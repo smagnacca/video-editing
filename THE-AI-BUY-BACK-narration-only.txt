@@ -1,0 +1,159 @@
+THE AI BUY-BACK — NARRATION SCRIPT
+2:46 Video | Record in One Take or Section-by-Section
+
+TONE: Professional, urgent, research-backed. High-energy but authoritative.
+Think: Scott Magnacca voice—confident, fast-paced, compelling.
+
+============================================================
+SECTION 1: THE HOOK (0:00 - 0:30) — 30 Seconds
+============================================================
+
+[Start with energy. Slow first line for emphasis.]
+
+History doesn't just happen—it divides.
+
+Just like electricity in 1880, or the internet in 1990, we've hit a
+"before and after" line. And it's happening right now.
+
+You're not looking at another tool. You're looking at your chance to
+transition from an operator—drowning in endless tasks—to an owner.
+Someone who sets the strategy and lets systems execute.
+
+The question isn't whether AI will change your business.
+The question is: will you lead that change, or manage it?
+
+
+============================================================
+SECTION 2: THE PROMISE (0:30 - 1:15) — 45 Seconds
+============================================================
+
+[Energy increases. Faster delivery, forward momentum.]
+
+The mission is crystal clear: buy back your time.
+
+Not marginal gains. Not "a few hours here and there."
+
+We're talking about reclaiming 15 hours of your week.
+
+AI isn't coming for your job. The person using AI is coming for yours.
+
+[Slight pause—let it land.]
+
+The real gap isn't technical. It's psychological. It's the
+"AI Confidence Gap"—the space between knowing you should use AI
+and actually installing it into your workflow.
+
+Today, we're closing that gap. From confusion to certainty.
+From waiting to winning.
+
+
+============================================================
+SECTION 3: THE FRAMEWORK — THE FOUR LEVERS (1:15 - 2:15) — 60 Seconds
+============================================================
+
+[Music shifts. Staccato delivery. One lever per beat.]
+
+Success isn't magic. It's mechanics. Four levers. Master them,
+and you own the space.
+
+---
+
+LEVER ONE: ACTIVATE.
+
+Train AI as your second brain. It needs to know your tone.
+Your Storyselling methodology. Your specific constraints.
+Your voice can't be lost to automation.
+
+An untrained AI is like an untrained employee.
+Expensive. Ineffective. Dangerous.
+
+---
+
+LEVER TWO: ACCELERATE.
+
+Blank page syndrome kills more great ideas than bad ideas ever could.
+AI removes the friction of starting. You move from "I have a concept"
+to "here's the strategic outline" in 90 seconds.
+
+Instead of staring at a blank screen for 2 hours,
+you're refining a framework in 10 minutes.
+
+---
+
+LEVER THREE: AMPLIFY.
+
+One core idea. Fifty authentic outputs.
+A single masterpiece becomes a movement.
+
+Traditional content creation: create, publish, done.
+AI amplification: create, adapt, distribute across every channel—
+without losing your voice.
+
+This is where leverage lives.
+
+---
+
+LEVER FOUR: AUGMENT.
+
+You're no longer a team of one.
+You're leading a multidisciplinary war room.
+
+Research that used to take your team three days? Done in 30 minutes.
+Analysis that required hiring a consultant? In-house, on-demand.
+
+You scale without hiring. You level up without burning out.
+
+
+============================================================
+SECTION 4: THE PSYCHOLOGY & CTA (2:15 - 2:46) — 31 Seconds
+============================================================
+
+[Music drops. Intimate, conversational. Slower delivery. Direct eye contact.]
+
+Here's what separates the owners from the operators:
+psychology, not mechanics.
+
+You can know all four levers. You can understand the framework perfectly.
+But if you don't move, if you stay in "learning mode," the person
+next to you—the one who actually implements—they'll own the market.
+
+Psychology beats mechanics every time.
+
+Don't give yourself years to adapt. Give yourself months.
+Massive leverage comes from urgency.
+
+You've seen the map. You know the four levers.
+Now you need to know where YOU stand.
+
+Take the 60-Second AI Quiz right now.
+
+Find your gaps. Claim your 15 hours.
+And let's get back to the work that actually matters.
+
+I'll see you on the other side.
+
+============================================================
+END OF NARRATION
+============================================================
+
+RECORDING NOTES:
+
+✓ Total Duration: 2:46 (166 seconds)
+✓ Delivery: High-energy but not breathless
+✓ Pacing: Medium-fast throughout (not rushed)
+✓ Emphasis: "History doesn't just happen" (slow), "Four levers" (punchy),
+  final CTA (intimate)
+✓ Breath Marks: Natural pauses after major ideas
+✓ Volume: Consistent, clear, confident
+
+RECORDING SETUP:
+- Quiet room (no background noise)
+- Microphone 6-8 inches from mouth
+- Speak into the mic at a slight angle (not directly)
+- One full take preferred, or section-by-section
+- Save as: narration.mp3 (44.1kHz, stereo, -3dB peak level)
+
+NEXT STEP:
+Once recorded, run Whisper to verify timing:
+  ffmpeg -i narration.mp3 -acodec libmp3lame -q:a 4 narration-clean.mp3
+  whisper narration-clean.mp3 --language en --output_format vtt
