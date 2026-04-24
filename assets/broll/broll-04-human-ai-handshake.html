@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Human + AI Handshake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0e1a; font-family: 'Montserrat', sans-serif; position: relative; }
+
+.bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 80% at 25% 50%, rgba(245,166,35,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 80% at 75% 50%, rgba(0,212,255,0.04) 0%, transparent 70%),
+    #0a0e1a;
+}
+
+/* Center burst */
+.burst {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(245,166,35,0.15) 30%, rgba(0,212,255,0.08) 60%, transparent 80%);
+  box-shadow:
+    0 0 60px 30px rgba(255,255,255,0.06),
+    0 0 120px 60px rgba(245,166,35,0.12),
+    0 0 200px 100px rgba(0,212,255,0.06);
+  z-index: 8;
+}
+
+/* Burst rays */
+.rays {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  z-index: 7;
+}
+.ray {
+  position: absolute; top: 50%; left: 50%;
+  width: 280px; height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(245,166,35,0.6), transparent);
+  border-radius: 1px;
+}
+
+/* Hands container */
+.hands-container {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1200px; height: 500px;
+  z-index: 5;
+}
+
+/* Human hand (left) — organic shape */
+.hand-human {
+  position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 520px; height: 380px;
+}
+
+/* AI hand (right) — geometric/circuit style */
+.hand-ai {
+  position: absolute; right: 0; top: 50%;
+  transform: translateY(-50%) scaleX(-1);
+  width: 520px; height: 380px;
+}
+
+svg.hand-svg {
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+
+/* Labels */
+.hand-label {
+  position: absolute; bottom: -60px;
+  font-family: 'Roboto Mono', monospace; font-size: 14px;
+  letter-spacing: 5px; text-transform: uppercase;
+  text-align: center; width: 100%;
+}
+.label-human { color: rgba(255,255,255,0.5); }
+.label-ai { color: rgba(0,212,255,0.7); }
+
+/* Text overlay */
+.text-overlay {
+  position: absolute; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center; z-index: 20;
+}
+.headline {
+  font-weight: 900; font-size: 60px; color: #fff;
+  letter-spacing: 5px; text-transform: uppercase;
+}
+.headline span { color: #f5a623; }
+.sublabel {
+  font-family: 'Roboto Mono', monospace; font-size: 18px;
+  color: #6a7d92; letter-spacing: 5px; margin-top: 14px;
+}
+
+/* Side text */
+.side-text {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 15;
+}
+.side-text.left { left: 80px; text-align: right; }
+.side-text.right { right: 80px; text-align: left; }
+.side-word {
+  font-weight: 700; font-size: 22px; letter-spacing: 4px;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  line-height: 2.2;
+  display: block;
+}
+.side-word.highlight { color: #f5a623; }
+.side-word.cyan { color: #00d4ff; }
+
+/* Circuit dots on AI side */
+.circuit-dots { position: absolute; inset: 0; z-index: 3; }
+.cdot {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  background: #00d4ff;
+  box-shadow: 0 0 8px rgba(0,212,255,0.8);
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- Rays from center -->
+<div class="rays">
+  <div class="ray" style="transform:rotate(0deg)"></div>
+  <div class="ray" style="transform:rotate(22.5deg)"></div>
+  <div class="ray" style="transform:rotate(45deg)"></div>
+  <div class="ray" style="transform:rotate(67.5deg)"></div>
+  <div class="ray" style="transform:rotate(90deg)"></div>
+  <div class="ray" style="transform:rotate(112.5deg)"></div>
+  <div class="ray" style="transform:rotate(135deg)"></div>
+  <div class="ray" style="transform:rotate(157.5deg)"></div>
+  <div class="ray" style="transform:rotate(180deg)"></div>
+  <div class="ray" style="transform:rotate(202.5deg)"></div>
+  <div class="ray" style="transform:rotate(225deg)"></div>
+  <div class="ray" style="transform:rotate(247.5deg)"></div>
+  <div class="ray" style="transform:rotate(270deg)"></div>
+  <div class="ray" style="transform:rotate(292.5deg)"></div>
+  <div class="ray" style="transform:rotate(315deg)"></div>
+  <div class="ray" style="transform:rotate(337.5deg)"></div>
+</div>
+<div class="burst"></div>
+
+<!-- Hands -->
+<div class="hands-container">
+  <!-- Human hand (organic) -->
+  <div class="hand-human">
+    <svg class="hand-svg" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="humanGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.05)"/>
+          <stop offset="100%" stop-color="rgba(245,166,35,0.3)"/>
+        </linearGradient>
+        <filter id="softglow">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Arm -->
+      <path d="M0,340 C60,340 100,330 140,320 C180,310 210,300 250,290 L260,300 C220,312 190,322 150,332 C110,342 70,350 0,350Z" fill="rgba(200,180,160,0.15)"/>
+      <!-- Palm -->
+      <path d="M200,290 C220,280 240,270 260,260 C280,250 310,240 330,235 C350,230 360,235 365,250 C365,265 355,280 340,290 C340,290 340,295 345,310 C350,325 348,340 335,345 C322,350 310,340 305,325 C300,310 298,305 295,300 C285,310 280,325 270,330 C260,335 248,330 242,318 C236,306 238,295 245,285 C235,295 228,308 218,312 C208,316 196,308 193,296 C190,284 196,275 205,272 C195,278 185,285 175,286 C165,287 156,278 158,266 C160,254 170,248 182,249 C170,255 162,265 165,275 Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+      <!-- Fingers pointing right -->
+      <!-- Index finger -->
+      <path d="M340,234 C345,220 355,208 365,200 C375,192 388,190 395,198 C402,206 400,220 392,230 C384,240 370,245 360,248 C350,251 340,248 338,240Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Middle finger (slightly longer) -->
+      <path d="M355,248 C362,234 374,222 386,216 C398,210 412,210 418,220 C424,230 420,246 410,254 C400,262 384,264 372,264 C360,264 348,258 348,250Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Ring finger -->
+      <path d="M360,268 C368,256 380,248 392,246 C404,244 416,250 418,262 C420,274 412,286 400,290 C388,294 374,290 366,282 C358,274 356,272 358,268Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Pinky -->
+      <path d="M348,292 C354,282 364,276 374,276 C384,276 392,284 390,294 C388,304 378,310 368,310 C358,310 346,304 346,296Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Thumb -->
+      <path d="M200,290 C188,280 180,268 185,255 C190,242 205,238 218,244 C230,250 236,265 230,278Z" fill="rgba(220,200,180,0.2)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Warm overlay glow -->
+      <ellipse cx="350" cy="265" rx="80" ry="50" fill="rgba(245,166,35,0.08)" filter="url(#softglow)"/>
+    </svg>
+    <div class="hand-label label-human">Human</div>
+  </div>
+
+  <!-- AI hand (geometric/circuit) -->
+  <div class="hand-ai">
+    <svg class="hand-svg" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="aiGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="rgba(0,212,255,0.05)"/>
+          <stop offset="100%" stop-color="rgba(0,212,255,0.4)"/>
+        </linearGradient>
+        <filter id="cyanGlow">
+          <feGaussianBlur stdDeviation="5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Arm — geometric stripes -->
+      <rect x="0" y="325" width="200" height="40" rx="4" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+      <rect x="0" y="332" width="200" height="2" fill="rgba(0,212,255,0.3)"/>
+      <rect x="0" y="356" width="200" height="1" fill="rgba(0,212,255,0.15)"/>
+      <rect x="20" y="328" width="1" height="34" fill="rgba(0,212,255,0.3)"/>
+      <rect x="60" y="328" width="1" height="34" fill="rgba(0,212,255,0.2)"/>
+      <rect x="100" y="328" width="1" height="34" fill="rgba(0,212,255,0.2)"/>
+      <rect x="140" y="328" width="1" height="34" fill="rgba(0,212,255,0.2)"/>
+      <rect x="180" y="328" width="1" height="34" fill="rgba(0,212,255,0.3)"/>
+
+      <!-- Palm - hexagonal segments -->
+      <polygon points="200,260 230,240 280,235 330,238 360,255 360,300 330,320 280,325 230,322 200,305" fill="rgba(0,30,60,0.6)" stroke="rgba(0,212,255,0.4)" stroke-width="1.5" filter="url(#cyanGlow)"/>
+      <!-- Inner panel lines -->
+      <line x1="230" y1="240" x2="230" y2="320" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+      <line x1="280" y1="235" x2="280" y2="325" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+      <line x1="330" y1="238" x2="330" y2="320" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+      <line x1="200" y1="280" x2="360" y2="280" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+      <!-- Circuit nodes on palm -->
+      <circle cx="255" cy="258" r="4" fill="#00d4ff" filter="url(#cyanGlow)"/>
+      <circle cx="305" cy="270" r="4" fill="#00d4ff" filter="url(#cyanGlow)"/>
+      <circle cx="255" cy="300" r="4" fill="#00d4ff" filter="url(#cyanGlow)"/>
+      <circle cx="305" cy="305" r="3" fill="rgba(0,212,255,0.5)"/>
+
+      <!-- AI Fingers (geometric/segmented) -->
+      <!-- Index -->
+      <g filter="url(#cyanGlow)">
+        <rect x="340" y="195" width="42" height="48" rx="6" fill="rgba(0,20,40,0.7)" stroke="rgba(0,212,255,0.5)" stroke-width="1.5"/>
+        <rect x="340" y="220" width="42" height="1" stroke="none" fill="rgba(0,212,255,0.3)"/>
+        <circle cx="361" cy="202" r="3" fill="#00d4ff"/>
+      </g>
+      <!-- Middle (longest) -->
+      <g filter="url(#cyanGlow)">
+        <rect x="358" y="178" width="42" height="66" rx="6" fill="rgba(0,20,40,0.7)" stroke="rgba(0,212,255,0.6)" stroke-width="1.5"/>
+        <rect x="358" y="210" width="42" height="1" fill="rgba(0,212,255,0.3)"/>
+        <rect x="358" y="225" width="42" height="1" fill="rgba(0,212,255,0.2)"/>
+        <circle cx="379" cy="186" r="3" fill="#00d4ff"/>
+      </g>
+      <!-- Ring -->
+      <g filter="url(#cyanGlow)">
+        <rect x="360" y="248" width="42" height="50" rx="6" fill="rgba(0,20,40,0.7)" stroke="rgba(0,212,255,0.4)" stroke-width="1.5"/>
+        <rect x="360" y="270" width="42" height="1" fill="rgba(0,212,255,0.3)"/>
+      </g>
+      <!-- Pinky -->
+      <g filter="url(#cyanGlow)">
+        <rect x="348" y="298" width="36" height="36" rx="6" fill="rgba(0,20,40,0.7)" stroke="rgba(0,212,255,0.3)" stroke-width="1.5"/>
+        <rect x="348" y="314" width="36" height="1" fill="rgba(0,212,255,0.2)"/>
+      </g>
+      <!-- Thumb -->
+      <g filter="url(#cyanGlow)">
+        <rect x="188" y="252" width="36" height="50" rx="6" transform="rotate(-30 206 277)" fill="rgba(0,20,40,0.7)" stroke="rgba(0,212,255,0.4)" stroke-width="1.5"/>
+      </g>
+
+      <!-- Cyan glow overlay -->
+      <ellipse cx="350" cy="265" rx="80" ry="50" fill="rgba(0,212,255,0.06)" filter="url(#cyanGlow)"/>
+    </svg>
+    <div class="hand-label label-ai" style="transform:scaleX(-1)">Artificial Intelligence</div>
+  </div>
+</div>
+
+<div class="text-overlay">
+  <div class="headline">Human <span>+</span> AI</div>
+  <div class="sublabel">The Partnership That Multiplies Results</div>
+</div>
+
+<div class="side-text left">
+  <span class="side-word">Intuition</span>
+  <span class="side-word highlight">Creativity</span>
+  <span class="side-word">Judgment</span>
+  <span class="side-word">Empathy</span>
+</div>
+
+<div class="side-text right">
+  <span class="side-word cyan">Speed</span>
+  <span class="side-word">Scale</span>
+  <span class="side-word cyan">Precision</span>
+  <span class="side-word">Memory</span>
+</div>
+</body>
+</html>

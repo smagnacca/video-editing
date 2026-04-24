@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Neural Network Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0e1a; font-family: 'Montserrat', sans-serif; position: relative; }
+
+/* Deep background radial */
+.bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, #0d1530 0%, #0a0e1a 70%);
+}
+
+/* Brain canvas area */
+.brain-wrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 860px; height: 760px;
+}
+
+/* Central glow core */
+.core-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,0.9) 0%, rgba(245,166,35,0.4) 40%, transparent 70%);
+  box-shadow: 0 0 80px 40px rgba(245,166,35,0.5), 0 0 160px 80px rgba(245,166,35,0.15);
+  z-index: 10;
+}
+
+/* SVG neural net overlay */
+svg.neural {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+/* Brain outline shape using clip-path */
+.brain-shape {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 70% 65% at 50% 45%, rgba(13,21,48,0.8) 0%, transparent 100%);
+  border-radius: 50% 50% 40% 40% / 55% 55% 45% 45%;
+  border: 1.5px solid rgba(0,212,255,0.12);
+  box-shadow: inset 0 0 120px rgba(0,212,255,0.06), 0 0 60px rgba(0,212,255,0.08);
+}
+
+/* Text overlay */
+.text-overlay {
+  position: absolute;
+  bottom: 68px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 20;
+}
+.headline {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: #fff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 40px rgba(245,166,35,0.5);
+}
+.headline span { color: #f5a623; }
+.sublabel {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+  font-size: 18px;
+  color: #6a7d92;
+  letter-spacing: 6px;
+  margin-top: 12px;
+  text-transform: uppercase;
+}
+
+/* Ambient particles */
+.particles { position: absolute; inset: 0; z-index: 2; }
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0,212,255,0.6);
+  box-shadow: 0 0 6px rgba(0,212,255,0.8);
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="particles" id="particles"></div>
+
+<div class="brain-wrap">
+  <div class="brain-shape"></div>
+  <svg class="neural" viewBox="0 0 860 760" xmlns="http://www.w3.org/2000/svg">
+    <!-- Connection lines - cyan pathways -->
+    <g stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.35">
+      <!-- From center hub outward -->
+      <line x1="430" y1="380" x2="200" y2="220"/>
+      <line x1="430" y1="380" x2="300" y2="160"/>
+      <line x1="430" y1="380" x2="430" y2="130"/>
+      <line x1="430" y1="380" x2="560" y2="155"/>
+      <line x1="430" y1="380" x2="660" y2="210"/>
+      <line x1="430" y1="380" x2="690" y2="330"/>
+      <line x1="430" y1="380" x2="660" y2="480"/>
+      <line x1="430" y1="380" x2="550" y2="580"/>
+      <line x1="430" y1="380" x2="310" y2="580"/>
+      <line x1="430" y1="380" x2="200" y2="480"/>
+      <line x1="430" y1="380" x2="170" y2="350"/>
+      <!-- Secondary connections -->
+      <line x1="200" y1="220" x2="300" y2="160"/>
+      <line x1="300" y1="160" x2="430" y2="130"/>
+      <line x1="430" y1="130" x2="560" y2="155"/>
+      <line x1="560" y1="155" x2="660" y2="210"/>
+      <line x1="660" y1="210" x2="690" y2="330"/>
+      <line x1="690" y1="330" x2="660" y2="480"/>
+      <line x1="660" y1="480" x2="550" y2="580"/>
+      <line x1="550" y1="580" x2="310" y2="580"/>
+      <line x1="310" y1="580" x2="200" y2="480"/>
+      <line x1="200" y1="480" x2="170" y2="350"/>
+      <line x1="170" y1="350" x2="200" y2="220"/>
+      <!-- Inner ring -->
+      <line x1="300" y1="270" x2="430" y2="240"/>
+      <line x1="430" y1="240" x2="560" y2="270"/>
+      <line x1="560" y1="270" x2="590" y2="400"/>
+      <line x1="590" y1="400" x2="510" y2="510"/>
+      <line x1="510" y1="510" x2="350" y2="510"/>
+      <line x1="350" y1="510" x2="270" y2="400"/>
+      <line x1="270" y1="400" x2="300" y2="270"/>
+      <!-- Cross connections -->
+      <line x1="300" y1="270" x2="560" y2="270"/>
+      <line x1="430" y1="240" x2="590" y2="400"/>
+      <line x1="430" y1="240" x2="270" y2="400"/>
+      <line x1="300" y1="160" x2="590" y2="400"/>
+      <line x1="660" y1="210" x2="270" y2="400"/>
+      <line x1="200" y1="220" x2="510" y2="510"/>
+    </g>
+    <!-- Gold center lines -->
+    <g stroke="#f5a623" stroke-width="1.5" fill="none" opacity="0.5">
+      <line x1="430" y1="380" x2="300" y2="270"/>
+      <line x1="430" y1="380" x2="560" y2="270"/>
+      <line x1="430" y1="380" x2="590" y2="400"/>
+      <line x1="430" y1="380" x2="510" y2="510"/>
+      <line x1="430" y1="380" x2="350" y2="510"/>
+      <line x1="430" y1="380" x2="270" y2="400"/>
+      <line x1="430" y1="380" x2="430" y2="240"/>
+    </g>
+    <!-- Outer nodes -->
+    <g fill="#00d4ff">
+      <circle cx="200" cy="220" r="6" opacity="0.9"/>
+      <circle cx="300" cy="160" r="5" opacity="0.8"/>
+      <circle cx="430" cy="130" r="7" opacity="0.9"/>
+      <circle cx="560" cy="155" r="5" opacity="0.8"/>
+      <circle cx="660" cy="210" r="6" opacity="0.9"/>
+      <circle cx="690" cy="330" r="7" opacity="0.85"/>
+      <circle cx="660" cy="480" r="6" opacity="0.8"/>
+      <circle cx="550" cy="580" r="5" opacity="0.85"/>
+      <circle cx="310" cy="580" r="5" opacity="0.8"/>
+      <circle cx="200" cy="480" r="6" opacity="0.9"/>
+      <circle cx="170" cy="350" r="7" opacity="0.85"/>
+    </g>
+    <!-- Cyan glow nodes outer -->
+    <g fill="none" stroke="#00d4ff">
+      <circle cx="200" cy="220" r="12" stroke-width="1" opacity="0.3"/>
+      <circle cx="430" cy="130" r="14" stroke-width="1" opacity="0.3"/>
+      <circle cx="660" cy="210" r="12" stroke-width="1" opacity="0.3"/>
+      <circle cx="690" cy="330" r="14" stroke-width="1" opacity="0.3"/>
+      <circle cx="170" cy="350" r="14" stroke-width="1" opacity="0.3"/>
+    </g>
+    <!-- Inner ring nodes -->
+    <g fill="#f5a623">
+      <circle cx="300" cy="270" r="7" opacity="0.9"/>
+      <circle cx="430" cy="240" r="8" opacity="0.95"/>
+      <circle cx="560" cy="270" r="7" opacity="0.9"/>
+      <circle cx="590" cy="400" r="8" opacity="0.95"/>
+      <circle cx="510" cy="510" r="7" opacity="0.9"/>
+      <circle cx="350" cy="510" r="7" opacity="0.9"/>
+      <circle cx="270" cy="400" r="8" opacity="0.95"/>
+    </g>
+    <!-- Gold glow rings inner -->
+    <g fill="none" stroke="#f5a623">
+      <circle cx="300" cy="270" r="16" stroke-width="1" opacity="0.25"/>
+      <circle cx="430" cy="240" r="18" stroke-width="1" opacity="0.25"/>
+      <circle cx="560" cy="270" r="16" stroke-width="1" opacity="0.25"/>
+      <circle cx="590" cy="400" r="18" stroke-width="1" opacity="0.25"/>
+      <circle cx="270" cy="400" r="18" stroke-width="1" opacity="0.25"/>
+    </g>
+    <!-- Extra micro nodes scattered -->
+    <g fill="#6a7d92" opacity="0.6">
+      <circle cx="240" cy="310" r="3"/>
+      <circle cx="380" cy="195" r="3"/>
+      <circle cx="500" cy="195" r="3"/>
+      <circle cx="620" cy="310" r="3"/>
+      <circle cx="610" cy="450" r="3"/>
+      <circle cx="480" cy="545" r="3"/>
+      <circle cx="370" cy="545" r="3"/>
+      <circle cx="245" cy="445" r="3"/>
+      <circle cx="355" cy="325" r="3"/>
+      <circle cx="505" cy="325" r="3"/>
+      <circle cx="490" cy="455" r="3"/>
+      <circle cx="370" cy="455" r="3"/>
+    </g>
+    <!-- Dashed grid lines subtle -->
+    <g stroke="#6a7d92" stroke-width="0.5" opacity="0.08" stroke-dasharray="4 8">
+      <line x1="0" y1="190" x2="860" y2="190"/>
+      <line x1="0" y1="380" x2="860" y2="380"/>
+      <line x1="0" y1="570" x2="860" y2="570"/>
+      <line x1="215" y1="0" x2="215" y2="760"/>
+      <line x1="430" y1="0" x2="430" y2="760"/>
+      <line x1="645" y1="0" x2="645" y2="760"/>
+    </g>
+  </svg>
+  <div class="core-glow"></div>
+</div>
+
+<div class="text-overlay">
+  <div class="headline">ARTIFICIAL <span>INTELLIGENCE</span></div>
+  <div class="sublabel">Neural Network Architecture</div>
+</div>
+
+<script>
+// Scatter ambient particles
+const container = document.getElementById('particles');
+const count = 60;
+for(let i = 0; i < count; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const size = Math.random() * 3 + 1;
+  p.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1}`;
+  container.appendChild(p);
+}
+</script>
+</body>
+</html>

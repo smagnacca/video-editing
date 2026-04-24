@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Time Savings Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0e1a; font-family: 'Montserrat', sans-serif; position: relative; }
+
+.bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(13,21,48,0.8) 0%, #0a0e1a 70%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(245,166,35,0.03) 0%, transparent 60%);
+}
+
+/* Clock container */
+.clock-wrap {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -52%);
+  z-index: 5;
+}
+
+/* Clock face */
+.clock-face {
+  width: 620px; height: 620px; border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle, #0d1530 0%, #080c18 70%, #060a14 100%);
+  border: 3px solid rgba(245,166,35,0.5);
+  box-shadow:
+    0 0 0 12px rgba(245,166,35,0.05),
+    0 0 0 14px rgba(245,166,35,0.15),
+    0 0 80px rgba(245,166,35,0.3),
+    0 0 160px rgba(245,166,35,0.1),
+    inset 0 0 80px rgba(0,0,0,0.5);
+}
+
+/* Tick marks */
+.tick {
+  position: absolute; top: 50%; left: 50%;
+  transform-origin: 0 0;
+  width: 2px;
+  background: rgba(106,125,146,0.4);
+}
+.tick.major {
+  width: 3px;
+  background: rgba(245,166,35,0.6);
+  box-shadow: 0 0 8px rgba(245,166,35,0.5);
+}
+
+/* Hour numbers */
+.hour-num {
+  position: absolute;
+  font-family: 'Roboto Mono', monospace; font-weight: 500;
+  font-size: 26px; color: rgba(255,255,255,0.5);
+  transform: translate(-50%, -50%);
+}
+
+/* Hour hand */
+.hand-hour {
+  position: absolute; bottom: 50%; left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(30deg);
+  width: 10px; height: 200px; border-radius: 5px 5px 0 0;
+  background: linear-gradient(0deg, #f5a623, rgba(245,166,35,0.6));
+  box-shadow: 0 0 20px rgba(245,166,35,0.5);
+}
+
+/* Minute hand with motion blur */
+.hand-minute {
+  position: absolute; bottom: 50%; left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(120deg);
+  width: 7px; height: 270px; border-radius: 4px 4px 0 0;
+  background: linear-gradient(0deg, #fff, rgba(255,255,255,0.5));
+  box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+/* Motion blur effect using pseudo elements */
+.hand-minute::before {
+  content: '';
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%) rotate(-15deg);
+  transform-origin: bottom center;
+  width: 5px; height: 270px; border-radius: 4px 4px 0 0;
+  background: linear-gradient(0deg, rgba(255,255,255,0.3), transparent);
+}
+.hand-minute::after {
+  content: '';
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%) rotate(15deg);
+  transform-origin: bottom center;
+  width: 5px; height: 270px; border-radius: 4px 4px 0 0;
+  background: linear-gradient(0deg, rgba(255,255,255,0.2), transparent);
+}
+
+/* Second hand */
+.hand-second {
+  position: absolute; bottom: 50%; left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(200deg);
+  width: 3px; height: 290px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(0deg, #00d4ff, rgba(0,212,255,0.4));
+  box-shadow: 0 0 10px rgba(0,212,255,0.6);
+}
+/* Tail below center */
+.hand-second-tail {
+  position: absolute; top: 50%; left: 50%;
+  transform-origin: top center;
+  transform: translateX(-50%) rotate(200deg);
+  width: 3px; height: 80px; border-radius: 0 0 2px 2px;
+  background: linear-gradient(180deg, rgba(0,212,255,0.5), transparent);
+}
+
+/* Center cap */
+.center-cap {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #f5a623;
+  box-shadow: 0 0 20px rgba(245,166,35,0.8);
+  z-index: 10;
+}
+
+/* Gold sweep effect */
+.sweep-arc {
+  position: absolute; top: 50%; left: 50%;
+  width: 560px; height: 560px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 210deg,
+    rgba(245,166,35,0.12) 0deg,
+    rgba(245,166,35,0.0) 60deg,
+    transparent 60deg
+  );
+}
+
+/* Overlaid text headline */
+.main-text {
+  position: absolute; top: 65px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center; z-index: 20; white-space: nowrap;
+}
+.headline {
+  font-weight: 900; font-size: 60px; color: #f5a623;
+  letter-spacing: 4px; text-transform: uppercase;
+  text-shadow: 0 0 40px rgba(245,166,35,0.5);
+}
+.sublabel {
+  font-family: 'Roboto Mono', monospace; font-size: 18px;
+  color: #6a7d92; letter-spacing: 6px; margin-top: 12px;
+}
+
+/* Bottom row */
+.bottom-text {
+  position: absolute; bottom: 65px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center; z-index: 20; white-space: nowrap;
+}
+.big-stat {
+  font-weight: 900; font-size: 80px; color: #fff;
+  letter-spacing: 6px;
+  text-shadow: 0 0 30px rgba(255,255,255,0.2);
+}
+.big-stat span { color: #00d4ff; }
+.stat-desc {
+  font-family: 'Roboto Mono', monospace; font-size: 18px;
+  color: #6a7d92; letter-spacing: 5px; margin-top: 8px;
+}
+
+/* Side stats */
+.side-info {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 10;
+}
+.side-info.left { left: 100px; }
+.side-info.right { right: 100px; }
+.info-block { margin-bottom: 40px; }
+.info-num { font-weight: 900; font-size: 52px; color: #f5a623; }
+.info-label { font-family: 'Roboto Mono', monospace; font-size: 12px; color: #6a7d92; letter-spacing: 3px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="main-text">
+  <div class="headline">Save 10+ Hrs / Week</div>
+  <div class="sublabel">With AI-Powered Workflow Automation</div>
+</div>
+
+<!-- Clock -->
+<div class="clock-wrap">
+  <div class="clock-face" id="clock">
+    <!-- Sweep glow -->
+    <div class="sweep-arc"></div>
+
+    <!-- Hand hour -->
+    <div class="hand-hour"></div>
+    <!-- Hand minute with blur -->
+    <div class="hand-minute"></div>
+    <!-- Second hand -->
+    <div class="hand-second"></div>
+    <div class="hand-second-tail"></div>
+    <!-- Center cap -->
+    <div class="center-cap"></div>
+  </div>
+</div>
+
+<div class="bottom-text">
+  <div class="big-stat"><span>520+</span> Hours</div>
+  <div class="stat-desc">Reclaimed Per Year — Per Professional</div>
+</div>
+
+<div class="side-info left">
+  <div class="info-block">
+    <div class="info-num">2.4h</div>
+    <div class="info-label">Saved Per Day</div>
+  </div>
+  <div class="info-block">
+    <div class="info-num">$87</div>
+    <div class="info-label">Value Per Hour</div>
+  </div>
+</div>
+
+<div class="side-info right">
+  <div class="info-block">
+    <div class="info-num">73%</div>
+    <div class="info-label">Tasks Automated</div>
+  </div>
+  <div class="info-block">
+    <div class="info-num">4 Wks</div>
+    <div class="info-label">To Master AI</div>
+  </div>
+</div>
+
+<script>
+// Draw tick marks programmatically
+const clock = document.getElementById('clock');
+const clockSize = 620;
+const cx = clockSize / 2;
+const cy = clockSize / 2;
+const outerR = 295;
+
+for(let i = 0; i < 60; i++) {
+  const angle = (i / 60) * 360;
+  const isMajor = i % 5 === 0;
+  const tickLen = isMajor ? 24 : 12;
+  const tick = document.createElement('div');
+  tick.className = 'tick' + (isMajor ? ' major' : '');
+  const rad = (angle - 90) * Math.PI / 180;
+  const x1 = cx + outerR * Math.cos(rad);
+  const y1 = cy + outerR * Math.sin(rad);
+  tick.style.cssText = `
+    position:absolute;
+    width:${isMajor ? 3 : 2}px;
+    height:${tickLen}px;
+    left:${x1}px;
+    top:${y1}px;
+    transform:rotate(${angle}deg);
+    transform-origin:top center;
+  `;
+  clock.appendChild(tick);
+}
+
+// Draw hour numbers
+const hours = [12,1,2,3,4,5,6,7,8,9,10,11];
+const numR = 240;
+hours.forEach((h, i) => {
+  const angle = ((i / 12) * 360 - 90) * Math.PI / 180;
+  const x = cx + numR * Math.cos(angle);
+  const y = cy + numR * Math.sin(angle);
+  const el = document.createElement('div');
+  el.className = 'hour-num';
+  el.textContent = h;
+  el.style.cssText = `left:${x}px;top:${y}px;`;
+  clock.appendChild(el);
+});
+</script>
+</body>
+</html>

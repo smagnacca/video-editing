@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Revenue Growth Chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0e1a; font-family: 'Montserrat', sans-serif; position: relative; }
+
+.bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 80%, rgba(13,21,48,0.6) 0%, #0a0e1a 70%);
+}
+
+/* Header */
+.header {
+  position: absolute; top: 0; left: 0; right: 0; height: 88px;
+  background: linear-gradient(90deg, rgba(245,166,35,0.08) 0%, rgba(0,212,255,0.04) 100%);
+  border-bottom: 1px solid rgba(245,166,35,0.2);
+  display: flex; align-items: center; padding: 0 100px;
+  z-index: 10;
+}
+.header-title {
+  font-weight: 900; font-size: 26px; color: #f5a623;
+  letter-spacing: 8px; text-transform: uppercase;
+}
+.header-badge {
+  margin-left: 30px;
+  background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 4px; padding: 4px 14px;
+  font-family: 'Roboto Mono', monospace; font-size: 12px;
+  color: #f5a623; letter-spacing: 3px;
+}
+.header-right {
+  margin-left: auto; display: flex; align-items: center; gap: 30px;
+}
+.legend-item { display: flex; align-items: center; gap: 10px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.legend-label { font-family: 'Roboto Mono', monospace; font-size: 12px; color: #6a7d92; letter-spacing: 2px; }
+
+/* Chart area */
+.chart-container {
+  position: absolute; top: 108px; left: 80px; right: 80px; bottom: 100px;
+  z-index: 5;
+}
+
+/* Y-axis grid */
+.y-grid { position: absolute; left: 80px; right: 0; top: 0; bottom: 40px; }
+.y-line {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: rgba(106,125,146,0.1);
+  display: flex; align-items: center;
+}
+.y-val {
+  position: absolute; right: calc(100% + 16px);
+  font-family: 'Roboto Mono', monospace; font-size: 13px;
+  color: rgba(106,125,146,0.5); letter-spacing: 1px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+/* X axis labels */
+.x-labels {
+  position: absolute; bottom: 0; left: 80px; right: 0;
+  display: flex; justify-content: space-between;
+}
+.x-label {
+  font-family: 'Roboto Mono', monospace; font-size: 12px;
+  color: rgba(106,125,146,0.5); letter-spacing: 2px;
+}
+
+/* Main SVG chart */
+.chart-svg-wrap {
+  position: absolute; top: 0; left: 80px; right: 0; bottom: 40px;
+}
+svg.chart { width: 100%; height: 100%; }
+
+/* Milestone annotations */
+.annotation {
+  position: absolute;
+  z-index: 15;
+}
+.ann-line {
+  width: 1px; height: 60px;
+  background: rgba(0,212,255,0.4);
+  margin: 0 auto;
+}
+.ann-label {
+  background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 4px; padding: 4px 12px; margin-top: 6px;
+  font-family: 'Roboto Mono', monospace; font-size: 11px;
+  color: #00d4ff; letter-spacing: 2px; white-space: nowrap;
+}
+
+/* End point callout */
+.endpoint-callout {
+  position: absolute; z-index: 20;
+  top: 80px; right: 120px;
+  text-align: right;
+}
+.callout-num {
+  font-weight: 900; font-size: 72px; color: #f5a623;
+  letter-spacing: 2px; line-height: 1;
+  text-shadow: 0 0 40px rgba(245,166,35,0.5);
+}
+.callout-label {
+  font-family: 'Roboto Mono', monospace; font-size: 14px;
+  color: #6a7d92; letter-spacing: 4px; margin-top: 6px;
+}
+.callout-sub {
+  font-weight: 700; font-size: 20px; color: #00d4ff;
+  letter-spacing: 3px; margin-top: 8px;
+}
+
+/* Bottom stats */
+.bottom-stats {
+  position: absolute; bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 80px; z-index: 10;
+}
+.bstat { text-align: center; }
+.bstat-num { font-weight: 900; font-size: 38px; color: #f5a623; }
+.bstat-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: #6a7d92; letter-spacing: 3px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="header">
+  <div class="header-title">Revenue Growth</div>
+  <div class="header-badge">AI-DRIVEN</div>
+  <div class="header-right">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#f5a623;box-shadow:0 0 6px rgba(245,166,35,0.8)"></div>
+      <span class="legend-label">WITH AI</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:rgba(106,125,146,0.5)"></div>
+      <span class="legend-label">BASELINE</span>
+    </div>
+  </div>
+</div>
+
+<div class="chart-container">
+  <!-- Y axis labels -->
+  <div class="y-grid">
+    <div class="y-line" style="top:0%"><span class="y-val">$500K</span></div>
+    <div class="y-line" style="top:20%"><span class="y-val">$400K</span></div>
+    <div class="y-line" style="top:40%"><span class="y-val">$300K</span></div>
+    <div class="y-line" style="top:60%"><span class="y-val">$200K</span></div>
+    <div class="y-line" style="top:80%"><span class="y-val">$100K</span></div>
+    <div class="y-line" style="top:100%"><span class="y-val">$0</span></div>
+  </div>
+
+  <!-- Chart SVG -->
+  <div class="chart-svg-wrap">
+    <svg class="chart" viewBox="0 0 1700 870" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="mainFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f5a623" stop-opacity="0.4"/>
+          <stop offset="60%" stop-color="#f5a623" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#f5a623" stop-opacity="0.01"/>
+        </linearGradient>
+        <linearGradient id="baselineFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(106,125,146,0.15)"/>
+          <stop offset="100%" stop-color="rgba(106,125,146,0.01)"/>
+        </linearGradient>
+        <filter id="lineGlow3">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="dotGlow">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Baseline (slow linear growth) -->
+      <path d="M50,830 L280,780 L510,730 L740,690 L970,655 L1200,620 L1430,595 L1650,565"
+        stroke="rgba(106,125,146,0.3)" stroke-width="2" fill="none" stroke-dasharray="8 6"/>
+      <path d="M50,830 L280,780 L510,730 L740,690 L970,655 L1200,620 L1430,595 L1650,565 L1650,870 L50,870Z"
+        fill="url(#baselineFill)"/>
+
+      <!-- AI growth fill -->
+      <path d="M50,830 C150,800 200,770 280,720 C360,670 420,620 510,550 C600,480 660,420 740,350 C820,280 880,220 970,170 C1060,120 1120,95 1200,75 C1280,55 1360,40 1430,25 C1500,15 1580,10 1650,8 L1650,870 L50,870Z"
+        fill="url(#mainFill)"/>
+
+      <!-- AI line -->
+      <path d="M50,830 C150,800 200,770 280,720 C360,670 420,620 510,550 C600,480 660,420 740,350 C820,280 880,220 970,170 C1060,120 1120,95 1200,75 C1280,55 1360,40 1430,25 C1500,15 1580,10 1650,8"
+        stroke="#f5a623" stroke-width="4" fill="none" filter="url(#lineGlow3)"/>
+
+      <!-- Data points on AI line -->
+      <g fill="#f5a623" filter="url(#dotGlow)">
+        <circle cx="50" cy="830" r="7"/>
+        <circle cx="280" cy="720" r="7"/>
+        <circle cx="510" cy="550" r="7"/>
+        <circle cx="740" cy="350" r="8"/>
+        <circle cx="970" cy="170" r="8"/>
+        <circle cx="1200" cy="75" r="8"/>
+        <circle cx="1430" cy="25" r="9"/>
+        <circle cx="1650" cy="8" r="11"/>
+      </g>
+      <!-- Outer glow rings on final point -->
+      <circle cx="1650" cy="8" r="25" fill="none" stroke="#f5a623" stroke-width="2" opacity="0.4"/>
+      <circle cx="1650" cy="8" r="45" fill="none" stroke="#f5a623" stroke-width="1" opacity="0.2"/>
+      <circle cx="1650" cy="8" r="65" fill="none" stroke="#f5a623" stroke-width="0.5" opacity="0.1"/>
+
+      <!-- Annotation lines (vertical) -->
+      <line x1="510" y1="550" x2="510" y2="870" stroke="rgba(0,212,255,0.2)" stroke-width="1" stroke-dasharray="4 6"/>
+      <line x1="970" y1="170" x2="970" y2="870" stroke="rgba(0,212,255,0.2)" stroke-width="1" stroke-dasharray="4 6"/>
+
+      <!-- Percentage growth labels -->
+      <text x="400" y="490" fill="#00d4ff" font-family="'Roboto Mono',monospace" font-size="22" opacity="0.7">+58%</text>
+      <text x="858" y="115" fill="#00d4ff" font-family="'Roboto Mono',monospace" font-size="22" opacity="0.7">+120%</text>
+
+      <!-- X axis month labels -->
+      <g fill="#6a7d92" font-family="'Roboto Mono',monospace" font-size="20" text-anchor="middle">
+        <text x="50" y="900">Q1</text>
+        <text x="280" y="900">Q2</text>
+        <text x="510" y="900">Q3</text>
+        <text x="740" y="900">Q4</text>
+        <text x="970" y="900">Q5</text>
+        <text x="1200" y="900">Q6</text>
+        <text x="1430" y="900">Q7</text>
+        <text x="1650" y="900">Q8</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="endpoint-callout">
+  <div class="callout-num">$487K</div>
+  <div class="callout-label">PROJECTED ANNUAL REVENUE</div>
+  <div class="callout-sub">+340% since AI adoption</div>
+</div>
+
+<div class="bottom-stats">
+  <div class="bstat">
+    <div class="bstat-num">340%</div>
+    <div class="bstat-label">Revenue Growth</div>
+  </div>
+  <div class="bstat">
+    <div class="bstat-num">2 Yrs</div>
+    <div class="bstat-label">AI Adoption Period</div>
+  </div>
+  <div class="bstat">
+    <div class="bstat-num">$487K</div>
+    <div class="bstat-label">Current Annual ARR</div>
+  </div>
+  <div class="bstat">
+    <div class="bstat-num">$140K</div>
+    <div class="bstat-label">Baseline Without AI</div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Corporate Brain Trust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; background: #0a0e1a; font-family: 'Montserrat', sans-serif; position: relative; }
+
+/* Environment: office/desk feel */
+.bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 45% 80%, rgba(13,21,48,0.9) 0%, #0a0e1a 70%),
+    linear-gradient(180deg, #0a0e1a 0%, #0c1122 60%, #0a0e1a 100%);
+}
+
+/* Floor/desk surface */
+.desk {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 280px;
+  background: linear-gradient(180deg, transparent 0%, rgba(13,21,48,0.6) 40%, rgba(8,12,24,0.9) 100%);
+  border-top: 1px solid rgba(0,212,255,0.08);
+}
+
+/* Desk surface reflection line */
+.desk-line {
+  position: absolute; bottom: 280px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,212,255,0.15) 30%, rgba(245,166,35,0.1) 70%, transparent 100%);
+}
+
+/* Monitor screen on desk */
+.monitor-wrap {
+  position: absolute; bottom: 195px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+.monitor-body {
+  width: 340px; height: 220px;
+  background: #060b18;
+  border: 2px solid rgba(0,212,255,0.3);
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,212,255,0.15), 0 0 80px rgba(0,212,255,0.06);
+  overflow: hidden;
+}
+.monitor-screen {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #060b18 0%, #0a1428 100%);
+  display: flex; flex-direction: column; padding: 14px;
+  gap: 8px;
+}
+.monitor-row {
+  height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, rgba(0,212,255,0.4), rgba(0,212,255,0.1));
+}
+.monitor-row.gold { background: linear-gradient(90deg, rgba(245,166,35,0.5), rgba(245,166,35,0.1)); }
+.monitor-bar-wrap { display: flex; gap: 6px; margin-top: 4px; }
+.monitor-bar { flex: 1; border-radius: 2px 2px 0 0; }
+.monitor-stand {
+  width: 20px; height: 40px;
+  background: rgba(13,21,48,0.8); border: 1px solid rgba(0,212,255,0.15);
+  margin: 0 auto;
+}
+.monitor-base {
+  width: 80px; height: 10px; border-radius: 5px;
+  background: rgba(13,21,48,0.8); border: 1px solid rgba(0,212,255,0.15);
+  margin: 0 auto;
+}
+
+/* Person silhouette */
+.person {
+  position: absolute; bottom: 260px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+/* Head */
+.head {
+  width: 80px; height: 90px; border-radius: 50% 50% 45% 45%;
+  background: linear-gradient(160deg, rgba(80,90,120,0.4) 0%, rgba(40,50,80,0.6) 100%);
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,212,255,0.1);
+}
+/* Neck */
+.neck {
+  width: 28px; height: 20px; margin: 0 auto;
+  background: rgba(50,60,90,0.5);
+}
+/* Shoulders/torso */
+.torso {
+  width: 200px; height: 120px;
+  background: linear-gradient(160deg, rgba(60,70,100,0.4) 0%, rgba(30,40,70,0.6) 100%);
+  border-radius: 0 0 30px 30px;
+  position: relative;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+}
+
+/* Thought bubbles emerging from head */
+.thought-field {
+  position: absolute; top: -380px; left: 50%;
+  transform: translateX(-50%);
+  width: 1200px; height: 400px;
+  z-index: 8;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 16px 22px;
+  backdrop-filter: blur(2px);
+}
+.bubble-label {
+  font-weight: 900; font-size: 18px; letter-spacing: 3px;
+  text-transform: uppercase; text-align: center;
+}
+.bubble-sub {
+  font-family: 'Roboto Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-align: center; margin-top: 6px;
+}
+
+/* Bubble connector dots */
+.dot-trail {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0,212,255,0.6);
+  box-shadow: 0 0 8px rgba(0,212,255,0.8);
+}
+
+/* Glow around person head */
+.head-glow {
+  position: absolute; top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+  z-index: 3;
+}
+
+/* Title */
+.title {
+  position: absolute; top: 52px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center; z-index: 20;
+}
+.title-main {
+  font-weight: 900; font-size: 54px; color: #fff;
+  letter-spacing: 6px; text-transform: uppercase;
+  white-space: nowrap;
+}
+.title-main span { color: #f5a623; }
+.title-sub {
+  font-family: 'Roboto Mono', monospace; font-size: 16px;
+  color: #6a7d92; letter-spacing: 5px; margin-top: 12px;
+}
+
+/* Ambient glow behind person */
+.ambient {
+  position: absolute; bottom: 200px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 400px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.05) 0%, transparent 70%);
+  z-index: 2;
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="desk"></div>
+<div class="desk-line"></div>
+<div class="ambient"></div>
+
+<!-- Monitor on desk -->
+<div class="monitor-wrap">
+  <div class="monitor-body">
+    <div class="monitor-screen">
+      <div class="monitor-row" style="width:70%"></div>
+      <div class="monitor-row gold" style="width:50%"></div>
+      <div class="monitor-row" style="width:85%"></div>
+      <div class="monitor-row" style="width:40%"></div>
+      <div class="monitor-bar-wrap">
+        <div class="monitor-bar" style="height:40px;background:rgba(0,212,255,0.3)"></div>
+        <div class="monitor-bar" style="height:60px;background:rgba(245,166,35,0.4)"></div>
+        <div class="monitor-bar" style="height:50px;background:rgba(0,212,255,0.25)"></div>
+        <div class="monitor-bar" style="height:70px;background:rgba(245,166,35,0.35)"></div>
+        <div class="monitor-bar" style="height:45px;background:rgba(0,212,255,0.3)"></div>
+      </div>
+    </div>
+  </div>
+  <div class="monitor-stand"></div>
+  <div class="monitor-base"></div>
+</div>
+
+<!-- Person silhouette -->
+<div class="person">
+  <div class="head-glow"></div>
+  <div class="head"></div>
+  <div class="neck"></div>
+  <div class="torso"></div>
+
+  <!-- Thought bubbles floating above -->
+  <div class="thought-field">
+    <!-- Dot trails leading up from head -->
+    <div class="dot-trail" style="width:6px;height:6px;bottom:30px;left:49%"></div>
+    <div class="dot-trail" style="width:9px;height:9px;bottom:60px;left:48%"></div>
+    <div class="dot-trail" style="width:5px;height:5px;bottom:90px;left:47%;opacity:0.6"></div>
+
+    <!-- Bubble 1: Email Drafting -->
+    <div class="bubble" style="left:50px;top:30px;background:rgba(13,21,48,0.9);border:1.5px solid rgba(0,212,255,0.4);width:200px;box-shadow:0 0 30px rgba(0,212,255,0.15)">
+      <div class="bubble-label" style="color:#00d4ff;">Email<br>Drafts</div>
+      <div class="bubble-sub" style="color:#6a7d92;">AI WRITES IT</div>
+    </div>
+
+    <!-- Bubble 2: Data Analysis -->
+    <div class="bubble" style="left:290px;top:10px;background:rgba(13,21,48,0.9);border:1.5px solid rgba(245,166,35,0.5);width:220px;box-shadow:0 0 30px rgba(245,166,35,0.15)">
+      <div class="bubble-label" style="color:#f5a623;">Data<br>Analysis</div>
+      <div class="bubble-sub" style="color:#6a7d92;">INSTANT INSIGHTS</div>
+    </div>
+
+    <!-- Bubble 3: Meeting Prep (center) -->
+    <div class="bubble" style="left:540px;top:0px;background:rgba(13,21,48,0.95);border:2px solid rgba(0,212,255,0.6);width:230px;box-shadow:0 0 40px rgba(0,212,255,0.25);padding:22px 28px">
+      <div class="bubble-label" style="color:#00d4ff;font-size:20px;">Meeting<br>Prep</div>
+      <div class="bubble-sub" style="color:#6a7d92;">2 MIN BRIEFING</div>
+    </div>
+
+    <!-- Bubble 4: Proposals -->
+    <div class="bubble" style="left:800px;top:15px;background:rgba(13,21,48,0.9);border:1.5px solid rgba(245,166,35,0.4);width:200px;box-shadow:0 0 25px rgba(245,166,35,0.12)">
+      <div class="bubble-label" style="color:#f5a623;">Proposals<br>Written</div>
+      <div class="bubble-sub" style="color:#6a7d92;">AI TEMPLATES</div>
+    </div>
+
+    <!-- Bubble 5: Research -->
+    <div class="bubble" style="left:1030px;top:35px;background:rgba(13,21,48,0.9);border:1.5px solid rgba(0,212,255,0.35);width:190px;box-shadow:0 0 25px rgba(0,212,255,0.12)">
+      <div class="bubble-label" style="color:#00d4ff;">Research<br>Done</div>
+      <div class="bubble-sub" style="color:#6a7d92;">IN SECONDS</div>
+    </div>
+
+    <!-- Second row of smaller bubbles -->
+    <div class="bubble" style="left:170px;top:200px;background:rgba(10,14,26,0.9);border:1px solid rgba(106,125,146,0.3);width:160px;padding:12px 16px">
+      <div class="bubble-label" style="color:rgba(255,255,255,0.5);font-size:14px;">Scheduling</div>
+      <div class="bubble-sub" style="color:#6a7d92;">AI HANDLES</div>
+    </div>
+    <div class="bubble" style="left:890px;top:200px;background:rgba(10,14,26,0.9);border:1px solid rgba(106,125,146,0.3);width:160px;padding:12px 16px">
+      <div class="bubble-label" style="color:rgba(255,255,255,0.5);font-size:14px;">Reporting</div>
+      <div class="bubble-sub" style="color:#6a7d92;">AUTOMATED</div>
+    </div>
+  </div>
+</div>
+
+<div class="title">
+  <div class="title-main">The <span>AI</span>-Augmented Professional</div>
+  <div class="title-sub">Your AI assistant handles the busywork — you own the decisions</div>
+</div>
+</body>
+</html>
