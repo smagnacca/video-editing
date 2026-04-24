@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Session Progress</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .progress-widget {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: linear-gradient(135deg, #1a1f3a 0%, #0f1423 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+            z-index: 10000;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-weight: 600;
+            color: #f5a623;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-time {
+            color: #00d4ff;
+            font-size: 11px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .metric-label {
+            color: #a0aec0;
+            font-size: 12px;
+        }
+
+        .metric-value {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            margin: 14px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff 0%, #f5a623 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.warning {
+            background: linear-gradient(90deg, #f5a623 0%, #ff6b6b 100%);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .progress-percentage {
+            text-align: center;
+            font-size: 11px;
+            margin-top: 6px;
+            color: #a0aec0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: #00d4ff;
+            color: #0a0e1a;
+        }
+
+        .btn-primary:hover {
+            background: #00e5ff;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(245, 166, 35, 0.1);
+            color: #f5a623;
+            border: 1px solid #f5a623;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(245, 166, 35, 0.2);
+        }
+
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #ff6b6b;
+            display: none;
+        }
+
+        .warning-box.visible {
+            display: block;
+        }
+
+        .tip-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid #00d4ff;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #a0aec0;
+            border-radius: 4px;
+        }
+
+        .collapse-btn {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            background: transparent;
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .progress-widget.collapsed {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+        }
+
+        .progress-widget.collapsed .metric,
+        .progress-widget.collapsed .progress-bar-container,
+        .progress-widget.collapsed .action-buttons,
+        .progress-widget.collapsed .warning-box,
+        .progress-widget.collapsed .tip-box,
+        .progress-widget.collapsed .progress-header {
+            display: none;
+        }
+
+        .progress-widget.collapsed .collapse-btn {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-widget">
+    <div class="progress-header">
+        <div class="progress-title">Session Progress</div>
+        <div class="progress-time" id="sessionTime">0:00</div>
+        <button class="collapse-btn" id="collapseBtn">−</button>
+    </div>
+
+    <div class="metric">
+        <span class="metric-label">Session Time</span>
+        <span class="metric-value" id="timeValue">0h 0m</span>
+    </div>
+
+    <div class="metric">
+        <span class="metric-label">Tokens Used</span>
+        <span class="metric-value" id="tokensValue">0 / 200k</span>
+    </div>
+
+    <div class="metric">
+        <span class="metric-label">Context Usage</span>
+        <span class="metric-value" id="contextPercentage">0%</span>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    </div>
+    <div class="progress-percentage" id="progressLabel">0% of context</div>
+
+    <div class="warning-box" id="warningBox">
+        ⚠️ Context is 60%+ full. Memory compression suggested. Consider fresh session at 85%.
+    </div>
+
+    <div class="tip-box">
+        💡 Tip: Session will auto-compress memory and generate pickup prompt at 60% context.
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-secondary" id="compressBtn">Compress Memory</button>
+        <button class="btn-primary" id="pickupBtn">Generate Pickup</button>
+    </div>
+</div>
+
+<script>
+    const widget = {
+        startTime: Date.now(),
+        tokenBudget: 200000,
+        warningThreshold: 0.6,
+        criticalThreshold: 0.85,
+        hasTriggeredWarning: false,
+        isCollapsed: false,
+
+        init() {
+            this.updateDisplay();
+            setInterval(() => this.updateDisplay(), 1000);
+            document.getElementById('collapseBtn').addEventListener('click', () => this.toggle());
+            document.getElementById('compressBtn').addEventListener('click', () => this.compressMemory());
+            document.getElementById('pickupBtn').addEventListener('click', () => this.generatePickup());
+        },
+
+        getSessionTime() {
+            const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+            const hours = Math.floor(elapsed / 3600);
+            const minutes = Math.floor((elapsed % 3600) / 60);
+            const seconds = elapsed % 60;
+            return { hours, minutes, seconds, elapsed };
+        },
+
+        getTokensUsed() {
+            // In real implementation, this would receive token count from Claude
+            // For demo: simulate usage based on session duration
+            const { elapsed } = this.getSessionTime();
+            const estimatedTokens = Math.floor(elapsed * 30); // ~30 tokens/second estimate
+            return Math.min(estimatedTokens, this.tokenBudget);
+        },
+
+        getContextPercentage() {
+            const tokens = this.getTokensUsed();
+            return (tokens / this.tokenBudget) * 100;
+        },
+
+        updateDisplay() {
+            const { hours, minutes, seconds } = this.getSessionTime();
+            const tokens = this.getTokensUsed();
+            const contextPct = this.getContextPercentage();
+
+            // Update time
+            document.getElementById('sessionTime').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timeValue').textContent =
+                hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m ${seconds}s`;
+
+            // Update tokens
+            document.getElementById('tokensValue').textContent =
+                `${this.formatNumber(tokens)} / ${this.formatNumber(this.tokenBudget)}`;
+
+            // Update context
+            document.getElementById('contextPercentage').textContent = `${Math.round(contextPct)}%`;
+            document.getElementById('progressLabel').textContent = `${Math.round(contextPct)}% of context`;
+
+            // Update progress bar
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = Math.min(contextPct, 100) + '%';
+            progressBar.classList.toggle('warning', contextPct >= this.warningThreshold);
+
+            // Trigger warning at 60%
+            if (contextPct >= this.warningThreshold && !this.hasTriggeredWarning) {
+                this.hasTriggeredWarning = true;
+                document.getElementById('warningBox').classList.add('visible');
+                console.log('⚠️ Context 60% full — Consider memory compression and pickup prompt');
+            }
+
+            // Visual warning at 85%
+            if (contextPct >= this.criticalThreshold) {
+                progressBar.style.boxShadow = '0 0 12px rgba(255, 107, 107, 0.6)';
+            }
+        },
+
+        formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+            return num.toString();
+        },
+
+        toggle() {
+            this.isCollapsed = !this.isCollapsed;
+            const widget = document.querySelector('.progress-widget');
+            widget.classList.toggle('collapsed');
+            document.getElementById('collapseBtn').textContent = this.isCollapsed ? '✕' : '−';
+        },
+
+        compressMemory() {
+            alert('📚 Memory compression:\n\n1. Run: /skills consolidate-memory\n2. Review memory/MEMORY.md\n3. Merge duplicates\n4. Prune stale entries\n\nThis happens automatically in Cowork.');
+        },
+
+        generatePickup() {
+            const { hours, minutes } = this.getSessionTime();
+            const tokens = this.getTokensUsed();
+            const pickup = `
+## Pickup Prompt — Session ${hours}h ${minutes}m
+
+**Status:** Context ${Math.round(this.getContextPercentage())}% full | Tokens: ${this.formatNumber(tokens)} used
+
+**What's Been Done This Session:**
+- [List completed items here]
+
+**What's Next:**
+- [Priority next action]
+
+**Current Branch:** [branch name]
+**Last Commit:** [commit hash]
+
+**Modified Files:** [list]
+
+**To Resume:** Paste this prompt + context into fresh session.
+            `;
+
+            console.log(pickup);
+            const blob = new Blob([pickup], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pickup-${hours}h${minutes}m.md`;
+            a.click();
+            alert('✅ Pickup prompt generated and downloaded!');
+        }
+    };
+
+    widget.init();
+</script>
+
+</body>
+</html>
