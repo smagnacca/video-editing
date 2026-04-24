@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Buy-Back — Financial Infographic</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        .composition {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(135deg, #0a0e1a 0%, #050505 100%);
+        }
+
+        /* FILM GRAIN */
+        .grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' result='noise' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* FINANCIAL COMPARISON GRID */
+        .financial-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            width: 1700px;
+            opacity: 0;
+        }
+
+        .financial-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 50px 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .financial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .financial-card.highlight {
+            border-color: #f5a623;
+            background: rgba(245, 166, 35, 0.08);
+        }
+
+        .financial-card.highlight::before {
+            background: radial-gradient(circle at center, rgba(245, 166, 35, 0.1) 0%, transparent 70%);
+        }
+
+        .card-income {
+            font-size: 48px;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-label {
+            font-size: 16px;
+            color: #a0aec0;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .calculation {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #f5a623;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+            text-align: left;
+        }
+
+        .calc-line {
+            font-size: 18px;
+            color: #ffffff;
+            margin: 8px 0;
+            font-family: 'Monaco', monospace;
+        }
+
+        .calc-value {
+            color: #f5a623;
+            font-weight: 700;
+        }
+
+        .annual-value {
+            font-size: 42px;
+            font-weight: 900;
+            color: #f5a623;
+            margin: 25px 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .annual-label {
+            font-size: 14px;
+            color: #a0aec0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spending-options {
+            background: rgba(245, 166, 35, 0.05);
+            border: 1px solid #f5a623;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option {
+            font-size: 14px;
+            color: #ffffff;
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .option::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* CENTRAL HEADLINE */
+        .central-headline {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .headline-main {
+            font-size: 72px;
+            font-weight: 900;
+            color: #f5a623;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .headline-sub {
+            font-size: 28px;
+            color: #00d4ff;
+        }
+
+        /* BOTTOM CALLOUT */
+        .bottom-callout {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(245, 166, 35, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border: 2px solid #f5a623;
+            border-radius: 12px;
+            padding: 30px 60px;
+            text-align: center;
+            max-width: 1200px;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .callout-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .callout-subtext {
+            font-size: 20px;
+            color: #a0aec0;
+        }
+
+        .callout-emphasis {
+            color: #f5a623;
+        }
+    </style>
+</head>
+<body>
+
+<div class="composition">
+    <!-- FILM GRAIN -->
+    <div class="grain"></div>
+
+    <!-- HEADLINE -->
+    <div class="central-headline">
+        <div class="headline-main">15 HOURS / WEEK = ?</div>
+        <div class="headline-sub">What's That Worth to You Annually?</div>
+    </div>
+
+    <!-- FINANCIAL COMPARISON GRID -->
+    <div class="financial-grid" id="financialGrid">
+        <!-- Card 1: $50k -->
+        <div class="financial-card" id="card1">
+            <div class="card-income">$50,000</div>
+            <div class="card-label">Entry Level / Individual Contributor</div>
+            <div class="calculation">
+                <div class="calc-line">$50,000 ÷ 2,080 hrs = <span class="calc-value">$24/hr</span></div>
+                <div class="calc-line">$24 × 15 hrs = <span class="calc-value">$361/week</span></div>
+            </div>
+            <div class="annual-value" id="value1">$18,772</div>
+            <div class="annual-label">worth of time freed annually</div>
+            <div class="spending-options">
+                <div class="option">2 weeks extra vacation (guilt-free)</div>
+                <div class="option">Deep skill development (Python, no-code)</div>
+                <div class="option">Launch a side project (+$10-30k potential)</div>
+                <div class="option">Recover work-life balance</div>
+            </div>
+        </div>
+
+        <!-- Card 2: $150k -->
+        <div class="financial-card highlight" id="card2">
+            <div class="card-income">$150,000</div>
+            <div class="card-label">Senior / Manager Level</div>
+            <div class="calculation">
+                <div class="calc-line">$150,000 ÷ 2,080 hrs = <span class="calc-value">$72/hr</span></div>
+                <div class="calc-line">$72 × 15 hrs = <span class="calc-value">$1,081/week</span></div>
+            </div>
+            <div class="annual-value" id="value2">$56,212</div>
+            <div class="annual-label">worth of time freed annually</div>
+            <div class="spending-options">
+                <div class="option">Executive presence + strategic skills</div>
+                <div class="option">Leadership development (promotion track)</div>
+                <div class="option">High-leverage projects (visibility, impact)</div>
+                <div class="option">Consulting/advisory roles (+$15-50k)</div>
+            </div>
+        </div>
+
+        <!-- Card 3: $500k -->
+        <div class="financial-card" id="card3">
+            <div class="card-income">$500,000</div>
+            <div class="card-label">Executive / Entrepreneur</div>
+            <div class="calculation">
+                <div class="calc-line">$500,000 ÷ 2,080 hrs = <span class="calc-value">$240/hr</span></div>
+                <div class="calc-line">$240 × 15 hrs = <span class="calc-value">$3,605/week</span></div>
+            </div>
+            <div class="annual-value" id="value3">$187,460</div>
+            <div class="annual-label">worth of time freed annually</div>
+            <div class="spending-options">
+                <div class="option">Build your second business (+$500k+ potential)</div>
+                <div class="option">Invest in strategic ventures (LP positions)</div>
+                <div class="option">Personal brand + thought leadership</div>
+                <div class="option">Premium advisory roles (+$200-500k)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM CALLOUT -->
+    <div class="bottom-callout" id="bottomCallout">
+        <div class="callout-text">The value isn't just <span class="callout-emphasis">financial.</span></div>
+        <div class="callout-subtext">It's <span class="callout-emphasis">optionality.</span> 780 hours/year = the difference between drowning in tasks and building the next level.</div>
+    </div>
+</div>
+
+<script>
+    const timeline = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
+
+    // Headline appears
+    timeline.fromTo('.central-headline', { opacity: 0, y: -40 }, { opacity: 1, y: 0 }, 0);
+
+    // Financial grid fades in
+    timeline.fromTo('#financialGrid', { opacity: 0 }, { opacity: 1 }, 0.3);
+
+    // Cards stagger in with calculation animations
+    for (let i = 1; i <= 3; i++) {
+        const cardSelector = `#card${i}`;
+        const valueSelector = `#value${i}`;
+        const values = [18772, 56212, 187460];
+
+        timeline.fromTo(cardSelector,
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0 },
+            0.5 + (i - 1) * 0.2);
+
+        // Animate value counter
+        timeline.fromTo(valueSelector,
+            { innerHTML: '$0' },
+            {
+                innerHTML: '$' + values[i - 1].toLocaleString(),
+                duration: 1.2,
+                ease: 'power1.out',
+                onUpdate() {
+                    let current = Math.floor(this.progress() * values[i - 1]);
+                    document.querySelector(valueSelector).innerHTML = '$' + current.toLocaleString();
+                }
+            },
+            0.7 + (i - 1) * 0.2);
+
+        // Highlight the $150k card (middle)
+        if (i === 2) {
+            timeline.fromTo(cardSelector,
+                { borderColor: 'rgba(0, 212, 255, 0.2)' },
+                { borderColor: '#f5a623', duration: 0.6 },
+                0.8 + (i - 1) * 0.2);
+        }
+    }
+
+    // Bottom callout
+    timeline.fromTo('#bottomCallout', { opacity: 0, y: 40 }, { opacity: 1, y: 0 }, 3.2);
+
+    // Pulsing emphasis on callout
+    timeline.to('.callout-emphasis', { opacity: 1, duration: 0.4 }, 3.5);
+</script>
+
+</body>
+</html>

@@ -2,6 +2,57 @@
 
 ---
 
+## 2026-04-24 — The AI Buy-Back: Premium HTML Composition (Session Postmortem)
+
+**Project:** `ai-buy-back/` — 3-4 min promotional video  
+**Status:** Main composition rendered, awaiting final concat  
+**Duration:** 3 hours (target: 20 min — see postmortem below)
+
+### What Was Built
+- **Scott's narration:** Converted `AI summit 1.m4a` → `/tmp/scott-narration.mp3` (243s), transcribed with Whisper
+- **Intro question screen:** `/tmp/intro-question.mp4` (3s) — approved ✅
+- **Jensen full clip:** `/tmp/jensen-full-norm.mp4` (34s, normalized) — approved ✅
+- **Premium HTML composition:** `/tmp/composition-premium.html` (190s)
+  - 7 scenes with CSS timing matched to Whisper VTT timestamps (seconds, not frames)
+  - Canvas particle system (120 gold+cyan particles)
+  - Dynamic hue-rotate background (190s slow shift)
+  - SVG stroke-dashoffset icons (neural nodes, trajectory arrows, loops, speed lines, broadcast waves)
+  - Metallic shimmer gradient text, Ken Burns zoom, spring cubic-bezier card reveals
+  - Count-up numbers, animated bar fills, pulsing glow rings
+  - ZERO emoji — all icons are SVG geometric shapes
+- **CTA section:** `/tmp/cta-clean.mp4` (53s, Scott's voice) — approved ✅
+
+### 5 Costly Mistakes (Postmortem — documented in `feedback_20min_pipeline_discipline.md`)
+1. **Started coding before asset audit** — didn't find Scott's .m4a recording, built full TTS version first (+45 min)
+2. **Avatar as full-screen segments** — had to rebuild 5-part sandwich as PIP overlay (+30 min)
+3. **Used AI clip art b-roll** — broll-01-neural-brain.png flagged, redownloaded real photos (+20 min)
+4. **Emoji icons in composition** — 🧠⚡📚🚀⚙️ flagged as "cheap and low quality", full HTML rebuild (+30 min)
+5. **Audio levels wrong** — 0.75 → 0.80 → 0.96 iterations, lip-sync mismatch from old avatar clips (+20 min)
+
+### Key Technical Decisions
+1. **HTML/CSS composition** (not Remotion) for fast iteration + CSS `animation-delay` in real seconds matching Whisper VTT timestamps
+2. **Playwright recording** — `recordVideo` API captures 192s at 1920×1080 to webm
+3. **4-part structure:** intro-question + jensen + premium-composition + cta-clean
+4. **ffmpeg filter_complex only** — no concat demuxer (banned)
+5. **Narrator 0.96, music 0.02** — confirmed final volume levels
+
+### New Memory Files Created
+- `feedback_20min_pipeline_discipline.md` — Root causes + prevention rules for 20-min sessions
+- `feedback_html_premium_animation_toolkit.md` — 10 CSS/Canvas animation techniques for A+ quality
+- `feedback_no_ai_clipart.md` (existing, reinforced)
+- `feedback_avatar_pip_rules.md` (existing, reinforced)
+- Updated: `narration_voice_strategy.md` — added volume levels + intake check
+- Updated: `continuous_excellence_protocol.md` — added emoji ban to sacred rules
+
+### Next Steps
+1. Render `composition-premium.html` → webm (Playwright, ~3 min)
+2. Mix Scott's narration (0.96) + bg music (0.02) over composition
+3. Final 4-part concat → `/tmp/ai-buy-back-FINAL.mp4`
+4. QA: preview, check levels, verify sync at scene boundaries
+5. Copy to Desktop, git commit
+
+---
+
 ## 2026-04-23 (Evening) — Practical AI Promo FINAL: Split-Screen PIP, Timing Sync, 10 B-roll Graphics
 
 **Project:** `practical-ai-promo/` — **Final v4 → FINAL** (2:46 complete sandwich video)

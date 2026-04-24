@@ -14,6 +14,50 @@ This project consolidates video production knowledge from the Cowork-video-editi
 
 ---
 
+## 🚨 MANDATORY SESSION START — READ BEFORE TOUCHING ANY FILE
+
+**This is not optional. Every session starts here. No exceptions.**
+
+### Hard-Stop Rules (Learned from painful rework — do NOT skip)
+
+1. **Avatar = PIP only, NEVER full-screen.** Avatar clips go as small overlays (320×180) in corner. The graphics/animations are the star. Full-screen avatar = immediate rebuild.
+
+2. **No AI clip art.** No brain graphics, no neural network visualizations, no lightning bolts, no generic "AI imagery." Use real business photos, professional infographics, or data charts only. Check every b-roll before using it.
+
+3. **Asset audit FIRST.** Before writing a single line of ffmpeg, list every asset on disk: avatar clips, narration, music, b-roll, headshot. Run: `ls assets/` and verify `/tmp/` files exist. This prevents building the wrong thing.
+
+4. **B-roll images are PIP inserts (640×360, lower-right), not full-frame overlays.** They accent the graphics, not replace them.
+
+5. **Avatar lip-sync note:** The `practical-ai-INTRO/MIDDLE/OUTRO.mp4` clips were recorded for a prior video. Use them as PIP — the lip-sync mismatch is acceptable at small size. If Scott records new narration, flag that new avatar clips are needed.
+
+6. **Music at 0.02 volume, narrator at 0.96.** Always. No exceptions. (Confirmed 2026-04-24: was 0.75, bumped to 0.96 after Scott's explicit request.)
+
+7. **Use FULL authority clips** (Jensen etc.) — never trim mid-thought.
+
+8. **Concat = filter_complex only.** Never concat demuxer. Never.
+
+9. **Render to /tmp first**, then copy to Desktop. Workspace mount has EPERM.
+
+10. **20-minute target.** If a task is taking longer than 5 minutes on any single stage, stop and reassess. Most rework comes from starting without a clear plan.
+
+11. **NO EMOJI as icons.** Zero emoji in video compositions (🧠⚡📚🚀⚙️ etc). All icons must be SVG with geometric shapes and stroke-dashoffset animations. Scott called emoji "cheap and low quality" (AI Buy-Back, 2026-04-24).
+
+12. **Check for Scott's narration FIRST.** Before ANY audio work, look for .m4a/.mp3 uploads in the conversation AND run `ls assets/*.m4a assets/*.mp3`. If Scott recorded his own voice, use it. Never generate TTS when a recording exists.
+
+13. **Never rebuild approved sections.** Once Scott says "X is great" — that part is LOCKED. Only rebuild sections explicitly flagged as problems.
+
+### The 20-Minute Pipeline (follow this order exactly)
+1. Asset audit (`ls assets/`, check /tmp/, check for uploaded .m4a) — 2 min
+2. Whisper transcription → get word timestamps — 3 min
+3. Plan scenes on paper (timestamps, no code yet) — 2 min
+4. Build HTML/Remotion composition with timing matched to Whisper VTT seconds — 5 min
+5. Render composition to webm/mp4 — 3 min
+6. Mix audio: narrator 0.96 + music 0.02 (ffmpeg filter_complex) — 1 min
+7. Final concat: intro + jensen + composition + cta — 2 min
+8. QA + open for review — 2 min
+
+---
+
 ## Before Starting Any Video
 
 1. **Check memory files** — Read `design_standards.md` and `pitfalls.md` for what to avoid

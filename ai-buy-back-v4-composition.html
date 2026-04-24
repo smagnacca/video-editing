@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:1920px; height:1080px; overflow:hidden; background:#060a14;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif; color:#fff; }
+
+canvas#particles { position:absolute; top:0; left:0; z-index:0; }
+.bg-hue { position:absolute; inset:0; z-index:1;
+  background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(0,212,255,.07) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 80% at 80% 30%,rgba(245,166,35,.05) 0%,transparent 60%);
+  animation:hueDrift 190s linear forwards; }
+@keyframes hueDrift {
+  0%  {filter:hue-rotate(0deg)   brightness(1);}
+  25% {filter:hue-rotate(15deg)  brightness(1.05);}
+  50% {filter:hue-rotate(-10deg) brightness(1.1);}
+  75% {filter:hue-rotate(20deg)  brightness(1.05);}
+  100%{filter:hue-rotate(0deg)   brightness(1);}
+}
+
+/* Scene flash on transitions */
+.flash{position:absolute;inset:0;z-index:5;opacity:0;pointer-events:none;background:#fff;}
+@keyframes flashBurst{0%{opacity:0}5%{opacity:.15}25%{opacity:.05}100%{opacity:0}}
+
+.scene{position:absolute;inset:0;z-index:10;display:flex;align-items:center;
+  justify-content:center;opacity:0;pointer-events:none;}
+
+/* ══ SCENE 1 — HISTORY DIVIDES  0→17s ══ */
+#s1{animation:s1life 17s ease 0s forwards;flex-direction:column;text-align:center;
+    background:radial-gradient(circle at 50% 40%,rgba(0,212,255,.04) 0%,transparent 70%);}
+@keyframes s1life{0%{opacity:0}8%{opacity:1}88%{opacity:1}100%{opacity:0}}
+
+.s1-eyebrow{font-size:26px;font-weight:700;letter-spacing:8px;color:#00d4ff;
+  text-transform:uppercase;opacity:0;animation:fadeUp .8s ease .1s forwards;}
+.s1-line1{font-size:160px;font-weight:900;letter-spacing:-6px;line-height:.95;
+  text-transform:uppercase;opacity:0;
+  background:linear-gradient(135deg,#fff 30%,#a0c4ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp 1s ease .3s forwards,kenBurnsTitle 17s ease 0s forwards;}
+@keyframes kenBurnsTitle{0%{transform:scale(1)}100%{transform:scale(1.04)}}
+.s1-divider{width:0;height:5px;background:linear-gradient(90deg,#f5a623,#00d4ff);
+  margin:24px auto;border-radius:3px;animation:dividerGrow .8s ease 3.8s forwards;}
+@keyframes dividerGrow{to{width:400px}}
+/* "It divides" — VTT 0:04.58 → delay 4.3s (0.28s lead = perfect) */
+.s1-line2{font-size:100px;font-weight:900;letter-spacing:-3px;line-height:1;
+  text-transform:uppercase;opacity:0;
+  background:linear-gradient(135deg,#f5a623 0%,#ffcc44 60%,#f5a623 100%);background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp 1s ease 4.3s forwards,shimmer 3s linear 4.3s infinite,textGlow 4s ease 4.3s infinite;}
+@keyframes textGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(245,166,35,.2))}50%{filter:drop-shadow(0 0 28px rgba(245,166,35,.6))}}
+.s1-sub{font-size:32px;font-weight:400;color:rgba(255,255,255,.65);letter-spacing:2px;
+  opacity:0;animation:fadeUp .8s ease 5.5s forwards;}
+/* "electricity in the 1880s" — VTT 0:06.54 → delay 6.3s */
+.s1-timeline{display:flex;gap:48px;align-items:flex-start;margin-top:36px;
+  opacity:0;animation:fadeUp .8s ease 6.3s forwards;}
+.s1-arrow{font-size:40px;color:rgba(0,212,255,.5);margin-top:52px;}
+.s1-era{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.s1-era-year{font-size:48px;font-weight:900;color:#f5a623;}
+.s1-era-name{font-size:22px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-top:4px;}
+.s1-era.now .s1-era-year{color:#00d4ff;}
+.s1-era.now .s1-era-name{color:#00d4ff;font-weight:700;}
+.era-photo-card{width:300px;height:180px;border-radius:14px;overflow:hidden;position:relative;
+  opacity:0;border:1.5px solid rgba(255,255,255,.12);box-shadow:0 12px 40px rgba(0,0,0,.6);}
+.era-photo-card img{width:100%;height:100%;object-fit:cover;object-position:center;}
+.era-card-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,20,.1) 0%,rgba(6,10,20,.4) 100%);}
+.era-photo-card.c1{animation:cardReveal .9s cubic-bezier(.34,1.56,.64,1) 6.8s both;border-color:rgba(245,166,35,.4);}
+.era-photo-card.c2{animation:cardReveal .9s cubic-bezier(.34,1.56,.64,1) 7.2s both;border-color:rgba(0,212,255,.3);}
+.era-photo-card.c3{animation:cardReveal .9s cubic-bezier(.34,1.56,.64,1) 7.6s both;border-color:rgba(0,212,255,.6);
+  box-shadow:0 8px 32px rgba(0,212,255,.2);}
+@keyframes cardReveal{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:none}}
+
+/* ══ SCENE 2 — OPERATOR → OWNER  17→42s ══ PRESERVED EXACTLY ══ */
+#s2{animation:s2life 25s ease 17s forwards;padding:0;align-items:stretch;}
+@keyframes s2life{0%{opacity:0}6%{opacity:1}90%{opacity:1}100%{opacity:0}}
+.s2-left,.s2-right{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:80px 70px;text-align:center;position:relative;overflow:hidden;}
+.s2-left{background:linear-gradient(135deg,rgba(255,107,107,.07) 0%,rgba(255,60,60,.02) 100%);
+  border-right:3px solid rgba(245,166,35,.4);animation:slideFromLeft .9s ease 17.6s both;}
+.s2-right{background:linear-gradient(135deg,rgba(0,212,255,.07) 0%,rgba(0,180,255,.02) 100%);
+  animation:slideFromRight .9s ease 17.6s both;}
+@keyframes slideFromLeft{from{transform:translateX(-60px);opacity:0}to{transform:none;opacity:1}}
+@keyframes slideFromRight{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
+.op-icon,.own-icon{width:160px;height:160px;margin:0 auto 36px;}
+.s2-label{font-size:76px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+.s2-left .s2-label{color:#ff6b6b;}
+.s2-right .s2-label{color:#00d4ff;}
+.s2-traits{font-size:30px;line-height:1.9;color:rgba(255,255,255,.72);font-weight:400;}
+.s2-vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:20;text-align:center;opacity:0;animation:fadeIn .6s ease 19s forwards;}
+.vs-arrow{font-size:80px;color:#f5a623;line-height:1;animation:arrowPulse 1.4s ease-in-out infinite 19s;}
+@keyframes arrowPulse{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-8px);opacity:.7}}
+.s2-question{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
+  font-size:34px;font-weight:700;color:rgba(255,255,255,.9);text-align:center;
+  white-space:nowrap;z-index:20;opacity:0;animation:fadeUp .8s ease 21.5s forwards;}
+.s2-question span{color:#f5a623;}
+
+/* ══ SCENE 3 — 15 HOURS  42→62s ══ */
+#s3{animation:s3life 20s ease 42s forwards;flex-direction:column;text-align:center;}
+@keyframes s3life{0%{opacity:0}8%{opacity:1}88%{opacity:1}100%{opacity:0}}
+.s3-eyebrow{font-size:26px;font-weight:700;letter-spacing:8px;color:#00d4ff;
+  text-transform:uppercase;opacity:0;animation:fadeUp .7s ease 42.2s forwards;}
+/* "15" pops at 50s — when narrator says "15 hours of your week" (VTT: 0:50.20) */
+.s3-number{font-size:320px;font-weight:900;letter-spacing:-20px;line-height:.85;
+  background:linear-gradient(135deg,#f5a623 0%,#ffcc44 40%,#00d4ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 60px rgba(245,166,35,.4));
+  opacity:0;animation:numberPop 1.2s cubic-bezier(.175,.885,.32,1.275) 50s forwards,numberGlow 3s ease 51.2s infinite;}
+@keyframes numberPop{0%{opacity:0;transform:scale(.4)}70%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes numberGlow{0%,100%{filter:drop-shadow(0 0 40px rgba(245,166,35,.3))}50%{filter:drop-shadow(0 0 80px rgba(245,166,35,.7))}}
+.s3-unit{font-size:56px;font-weight:900;letter-spacing:3px;color:#fff;
+  text-transform:uppercase;opacity:0;animation:fadeUp .7s ease 51s forwards;}
+.s3-sub{font-size:32px;color:rgba(255,255,255,.65);margin-top:18px;
+  opacity:0;animation:fadeUp .7s ease 52s forwards;}
+.s3-bars{display:flex;gap:14px;margin-top:48px;justify-content:center;
+  opacity:0;animation:fadeIn .7s ease 53s forwards;}
+.s3-bar{width:44px;border-radius:6px;
+  background:linear-gradient(180deg,#f5a623,rgba(245,166,35,.2));
+  transform:scaleY(0);transform-origin:bottom;animation:barGrow .4s ease forwards;}
+/* Quote: "AI isn't coming for your job" — VTT 0:54.56 */
+.s3-quote{position:absolute;bottom:0;left:0;right:0;z-index:30;
+  text-align:center;padding:32px 120px 48px;
+  background:linear-gradient(0deg,rgba(6,10,20,.95) 60%,transparent 100%);
+  opacity:0;animation:fadeIn .6s ease 54s forwards;}
+.s3-q1{font-size:38px;font-weight:400;color:rgba(255,255,255,.75);letter-spacing:1px;
+  margin-bottom:18px;font-style:italic;opacity:0;animation:fadeUp .7s ease 54.3s forwards;}
+/* "The person using AI is coming for yours" — VTT 0:57.00 */
+.s3-q2{font-size:62px;font-weight:900;letter-spacing:-1px;line-height:1.1;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,#f5a623 0%,#ffcc44 50%,#f5a623 100%);background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:0;animation:fadeUp .8s ease 57s forwards,shimmer 3s linear 57s infinite,quotePulse 2.5s ease 58s infinite;}
+@keyframes quotePulse{0%,100%{filter:drop-shadow(0 0 12px rgba(245,166,35,.3))}50%{filter:drop-shadow(0 0 45px rgba(245,166,35,.9))}}
+.s3-quote-flash{position:absolute;inset:0;pointer-events:none;z-index:31;
+  animation:quoteFlash 1.5s ease 57s forwards;}
+@keyframes quoteFlash{0%{background:rgba(245,166,35,0)}10%{background:rgba(245,166,35,.1)}30%{background:rgba(245,166,35,.04)}100%{background:rgba(245,166,35,0)}}
+
+/* ── BUY · BACK · YOUR TIME — VTT 0:44.12 ── */
+.buyback-wrap{display:flex;gap:48px;align-items:baseline;justify-content:center;margin-bottom:20px;}
+.bb-w{font-size:148px;font-weight:900;letter-spacing:-6px;line-height:1;text-transform:uppercase;
+  opacity:0;transform:scale(.5) translateY(24px);}
+.bb-buy{color:#f5a623;animation:bbPop .45s cubic-bezier(.175,.885,.32,1.275) 44.1s forwards,bbGoldGlow 2s ease 44.7s infinite;}
+.bb-back{color:#00d4ff;animation:bbPop .45s cubic-bezier(.175,.885,.32,1.275) 44.55s forwards,bbCyanGlow 2s ease 45.1s infinite;}
+.bb-yt{color:#fff;font-size:100px;animation:bbPop .45s cubic-bezier(.175,.885,.32,1.275) 45.0s forwards;}
+@keyframes bbPop{0%{opacity:0;transform:scale(.5) translateY(24px)}65%{transform:scale(1.1) translateY(-6px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes bbGoldGlow{0%,100%{filter:drop-shadow(0 0 18px rgba(245,166,35,.35))}50%{filter:drop-shadow(0 0 60px rgba(245,166,35,.95))}}
+@keyframes bbCyanGlow{0%,100%{filter:drop-shadow(0 0 18px rgba(0,212,255,.35))}50%{filter:drop-shadow(0 0 60px rgba(0,212,255,.95))}}
+
+/* ══ SCENE 4 — CONFIDENCE GAP  62→87s ══ */
+#s4{animation:s4life 25s ease 62s forwards;flex-direction:column;text-align:center;padding:0 160px;}
+@keyframes s4life{0%{opacity:0}5%{opacity:1}92%{opacity:1}100%{opacity:0}}
+.s4-line1{font-size:64px;font-weight:900;color:#fff;line-height:1.2;
+  opacity:0;animation:fadeUp .8s ease 62.2s forwards;}
+.s4-line1 span{color:#ff6b6b;}
+.s4-line2{font-size:64px;font-weight:900;color:#fff;line-height:1.2;
+  margin-bottom:60px;opacity:0;animation:fadeUp .8s ease 63.0s forwards;}
+.s4-line2 span{color:#00d4ff;}
+.gap-track{width:100%;height:16px;background:rgba(255,255,255,.08);
+  border-radius:8px;position:relative;margin:0 auto 28px;max-width:1200px;
+  opacity:0;animation:fadeIn .6s ease 65s forwards;}
+.gap-fill{height:100%;border-radius:8px 0 0 8px;
+  background:linear-gradient(90deg,#ff6b6b,rgba(255,107,107,.3));
+  animation:gapExpand 3s ease 65.3s forwards;width:0;}
+@keyframes gapExpand{to{width:42%}}
+.gap-fill2{position:absolute;right:0;top:0;height:100%;border-radius:0 8px 8px 0;
+  background:linear-gradient(90deg,rgba(0,212,255,.3),#00d4ff);
+  animation:gap2Expand 3s ease 65.3s forwards;width:0;}
+@keyframes gap2Expand{to{width:36%}}
+.gap-labels{display:flex;justify-content:space-between;max-width:1200px;width:100%;
+  opacity:0;animation:fadeIn .6s ease 67s forwards;}
+.gap-label{font-size:30px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.gap-label.left{color:#ff6b6b;}
+.gap-label.right{color:#00d4ff;}
+/* "The space between knowing" VTT 1:08.08 = 68s */
+.gap-name{font-size:72px;font-weight:900;margin-top:48px;position:relative;
+  background:linear-gradient(135deg,#f5a623,#ffcc44);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:0;animation:fadeUp .8s ease 68s forwards,gapNamePulse 3s ease 69s infinite;}
+@keyframes gapNamePulse{0%,100%{filter:drop-shadow(0 0 10px rgba(245,166,35,.2))}50%{filter:drop-shadow(0 0 35px rgba(245,166,35,.65))}}
+.gap-name-scanwrap{position:relative;display:inline-block;overflow:hidden;}
+.gap-scanline{position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(245,166,35,.25),transparent);
+  opacity:0;animation:scanReveal 1.2s ease 68.3s forwards;}
+@keyframes scanReveal{0%{opacity:1;left:-60%}100%{opacity:0;left:120%}}
+.gap-desc{font-size:30px;color:rgba(255,255,255,.65);margin-top:16px;
+  opacity:0;animation:fadeUp .7s ease 69s forwards;}
+/* "closing the gap" bridge text — VTT 1:14.48 = 74.48s */
+.gap-bridge{font-size:40px;font-weight:700;color:#00d4ff;margin-top:40px;letter-spacing:1px;
+  opacity:0;animation:fadeUp .8s ease 80s forwards;}
+.gap-bridge span{color:#f5a623;}
+
+/* ── KNOWING (red) / DOING (blue) word pulses — VTT 1:08.08 / ~1:12 ── */
+.kd-wrap{position:absolute;bottom:80px;left:0;right:0;display:flex;
+  justify-content:center;gap:180px;pointer-events:none;z-index:20;}
+.kd-word{font-size:136px;font-weight:900;letter-spacing:-5px;text-transform:uppercase;
+  opacity:0;transform:scale(.55);}
+.kd-knowing{color:#ff1a1a;
+  animation:kdBoom .4s cubic-bezier(.175,.885,.32,1.275) 68s forwards,
+            kdRedPulse 1.6s ease 68.5s 4,kdFade .5s ease 76s forwards;}
+.kd-doing{color:#00d4ff;
+  animation:kdBoom .4s cubic-bezier(.175,.885,.32,1.275) 72s forwards,
+            kdBluePulse 1.6s ease 72.5s 4,kdFade .5s ease 80s forwards;}
+@keyframes kdBoom{0%{opacity:0;transform:scale(.45) translateY(28px)}65%{transform:scale(1.1) translateY(-6px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes kdRedPulse{0%,100%{filter:drop-shadow(0 0 24px rgba(255,0,0,.5))}50%{filter:drop-shadow(0 0 80px rgba(255,30,30,1));transform:scale(1.06)}}
+@keyframes kdBluePulse{0%,100%{filter:drop-shadow(0 0 24px rgba(0,212,255,.5))}50%{filter:drop-shadow(0 0 80px rgba(0,212,255,1));transform:scale(1.06)}}
+@keyframes kdFade{to{opacity:0}}
+
+/* ══ SCENE 6 — FOUR LEVERS  87→176s ══ */
+/* Narrator says "just four levers" at 1:27.48 = 87.48s — ends at 176s for CTA transition */
+#s6{animation:s6life 102s ease 87s forwards;flex-direction:column;}
+@keyframes s6life{0%{opacity:0}3%{opacity:1}97%{opacity:1}100%{opacity:0}}
+.s6-header{text-align:center;margin-bottom:52px;
+  opacity:0;animation:fadeUp .8s ease 87.5s forwards;}
+.s6-chip{display:inline-block;font-size:20px;letter-spacing:6px;color:#00d4ff;
+  border:1.5px solid rgba(0,212,255,.4);padding:7px 22px;border-radius:30px;
+  text-transform:uppercase;margin-bottom:18px;}
+.s6-title{font-size:90px;font-weight:900;letter-spacing:-2px;
+  background:linear-gradient(135deg,#fff 0%,#a0c4ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s6-levers{display:flex;gap:28px;padding:0 60px;width:100%;}
+.lever{flex:1;background:rgba(255,255,255,.025);border:1.5px solid rgba(0,212,255,.12);
+  border-radius:20px;padding:44px 32px;display:flex;flex-direction:column;
+  align-items:center;text-align:center;position:relative;overflow:hidden;
+  opacity:0;transform:translateY(50px) scale(.95);}
+/* VTT-synced lever reveals */
+/* Lever 1: "Level one, activate" 1:32.56 = 92.56s */
+.lever:nth-child(1){animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 92.5s forwards;}
+/* Lever 2: "Level two, accelerate" 1:54.20 = 114.2s */
+.lever:nth-child(2){animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 114.2s forwards;}
+/* Lever 3: "Level three, amplify" 2:18.16 = 138.16s */
+.lever:nth-child(3){animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 138.2s forwards;}
+/* Lever 4: "Level four, augment" 2:46.04 = 166.04s */
+.lever:nth-child(4){animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 166s forwards;}
+@keyframes leverIn{to{opacity:1;transform:none}}
+.lever.active{border-color:#f5a623;background:rgba(245,166,35,.06);box-shadow:0 0 40px rgba(245,166,35,.12);}
+.lever-num{font-size:18px;letter-spacing:4px;color:rgba(0,212,255,.6);
+  text-transform:uppercase;margin-bottom:20px;font-weight:700;}
+.lever-icon{width:80px;height:80px;margin:0 auto 24px;}
+.lever-name{font-size:44px;font-weight:900;color:#f5a623;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:16px;
+  animation:leverGlow 3s ease-in-out infinite;}
+@keyframes leverGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(245,166,35,.2))}50%{filter:drop-shadow(0 0 22px rgba(245,166,35,.55))}}
+.lever-text{font-size:22px;color:rgba(255,255,255,.72);line-height:1.5;}
+
+/* ══ SCENE 7 — ANIMATED CTA  176→192s ══ */
+#s7{display:none!important;animation:s7life 16s ease 176s forwards;flex-direction:column;text-align:center;
+    background:radial-gradient(ellipse at 50% 50%,rgba(245,166,35,.04) 0%,transparent 65%);}
+@keyframes s7life{0%{opacity:0}6%{opacity:1}90%{opacity:1}100%{opacity:0}}
+
+/* Concentric pulsing rings */
+.cta-rings-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;}
+.cta-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1.5px solid;transform:translate(-50%,-50%);}
+.cta-ring.r1{width:500px;height:500px;border-color:rgba(245,166,35,.14);animation:ctaRing 3.5s ease-in-out 176.5s infinite;}
+.cta-ring.r2{width:700px;height:700px;border-color:rgba(0,212,255,.09);animation:ctaRing 3.5s ease-in-out 177s infinite;}
+.cta-ring.r3{width:900px;height:900px;border-color:rgba(245,166,35,.05);animation:ctaRing 3.5s ease-in-out 177.5s infinite;}
+@keyframes ctaRing{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.025)}}
+
+.cta-content{position:relative;z-index:2;}
+.cta-eyebrow{font-size:22px;font-weight:700;letter-spacing:8px;color:#00d4ff;
+  text-transform:uppercase;margin-bottom:20px;
+  opacity:0;animation:fadeUp .6s ease 176.7s forwards;}
+.cta-headline{font-size:112px;font-weight:900;line-height:1.05;letter-spacing:-4px;color:#fff;
+  margin-bottom:20px;
+  opacity:0;animation:fadeUp .9s ease 177.1s forwards;}
+.cta-gold{color:#f5a623;}
+.cta-sub{font-size:34px;color:rgba(255,255,255,.72);margin-bottom:28px;
+  opacity:0;animation:fadeUp .7s ease 177.7s forwards;}
+.cta-divider{width:0;height:4px;background:linear-gradient(90deg,#00d4ff,#f5a623);
+  margin:0 auto 40px;border-radius:2px;animation:ctaDivGrow .8s ease 178.1s forwards;}
+@keyframes ctaDivGrow{to{width:280px}}
+.cta-steps{display:flex;gap:90px;justify-content:center;margin-bottom:48px;}
+.cta-step{text-align:center;opacity:0;}
+.step1{animation:fadeUp .6s cubic-bezier(.175,.885,.32,1.275) 178.5s forwards;}
+.step2{animation:fadeUp .6s cubic-bezier(.175,.885,.32,1.275) 178.9s forwards;}
+.step3{animation:fadeUp .6s cubic-bezier(.175,.885,.32,1.275) 179.3s forwards;}
+.step-num{font-size:70px;font-weight:900;color:#f5a623;line-height:1;}
+.step-label{font-size:26px;color:rgba(255,255,255,.7);margin-top:8px;max-width:220px;line-height:1.4;}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,#f5a623 0%,#ffcc44 50%,#f5a623 100%);
+  background-size:200% auto;color:#060a14;font-size:38px;font-weight:900;
+  padding:24px 68px;border-radius:50px;letter-spacing:1px;position:relative;overflow:hidden;
+  opacity:0;animation:fadeUp .7s ease 179.8s forwards,ctaBtnPulse 2s ease-in-out 180.5s infinite,shimmer 2.5s linear 180.5s infinite;}
+.cta-btn::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:ctaBtnShimmer 2.2s ease 180.5s infinite;}
+@keyframes ctaBtnShimmer{0%{left:-50%}100%{left:120%}}
+@keyframes ctaBtnPulse{0%,100%{transform:scale(1);box-shadow:0 8px 40px rgba(245,166,35,.45)}50%{transform:scale(1.02);box-shadow:0 20px 100px rgba(245,166,35,.85)}}
+
+/* ── DYNAMIC LEVER GOLD BOX (VTT-synced per lever) ── */
+@keyframes lev1Active{
+  0%  {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  91% {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  100%{border-color:rgba(0,212,255,.12);background:rgba(255,255,255,.025);box-shadow:none;}
+}
+@keyframes lev2Active{
+  0%  {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  92% {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  100%{border-color:rgba(0,212,255,.12);background:rgba(255,255,255,.025);box-shadow:none;}
+}
+@keyframes lev3Active{
+  0%  {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  93% {border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+  100%{border-color:rgba(0,212,255,.12);background:rgba(255,255,255,.025);box-shadow:none;}
+}
+@keyframes lev4Active{
+  to{border-color:#f5a623;background:rgba(245,166,35,.07);box-shadow:0 0 50px rgba(245,166,35,.22);}
+}
+/* Override nth-child animations with ID selectors (higher specificity) */
+#lev1{animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 92.5s forwards,
+            lev1Active 21.7s linear 92.5s forwards;}
+#lev2{animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 114.2s forwards,
+            lev2Active 24s linear 114.2s forwards;}
+#lev3{animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 138.2s forwards,
+            lev3Active 27.8s linear 138.2s forwards;}
+#lev4{animation:leverIn .8s cubic-bezier(.175,.885,.32,1.275) 166s forwards,
+            lev4Active 30s linear 166s forwards;}
+
+/* ── SHARED KEYFRAMES ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:0% center}}
+@keyframes spin1{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+@keyframes barGrow{to{transform:scaleY(1)}}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.25)}}
+</style>
+</head>
+<body>
+
+<!-- Scene transition flashes -->
+<div class="flash" style="animation:flashBurst 1s ease .2s forwards;"></div>
+<div class="flash" style="animation:flashBurst 1.2s ease 17s forwards;"></div>
+<div class="flash" style="animation:flashBurst 1.2s ease 42s forwards;"></div>
+<div class="flash" style="animation:flashBurst 1.2s ease 62s forwards;"></div>
+<div class="flash" style="animation:flashBurst 1.4s ease 87s forwards;"></div>
+<div class="flash" style="animation:flashBurst 1.4s ease 176s forwards;"></div>
+
+<canvas id="particles"></canvas>
+<div class="bg-hue"></div>
+
+<!-- ══ SCENE 1: HISTORY DIVIDES ══ -->
+<div class="scene" id="s1">
+  <div>
+    <div class="s1-eyebrow">A Defining Moment</div>
+    <div class="s1-line1">HISTORY DOESN'T<br>JUST HAPPEN</div>
+    <div class="s1-divider"></div>
+    <div class="s1-line2">IT DIVIDES.</div>
+    <div class="s1-sub">Before &amp; after lines that change everything</div>
+    <div class="s1-timeline">
+      <div class="s1-era">
+        <div class="era-photo-card c1"><img src="/tmp/era-lightning.jpg" alt="Electricity"><div class="era-card-overlay"></div></div>
+        <div class="s1-era-year">1880s</div><div class="s1-era-name">Electricity</div>
+      </div>
+      <div class="s1-arrow">→</div>
+      <div class="s1-era">
+        <div class="era-photo-card c2"><img src="/tmp/era-computer.jpg" alt="Internet"><div class="era-card-overlay"></div></div>
+        <div class="s1-era-year">1990s</div><div class="s1-era-name">Internet</div>
+      </div>
+      <div class="s1-arrow">→</div>
+      <div class="s1-era now">
+        <div class="era-photo-card c3" style="background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,30,60,.8));display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 200 120" fill="none" style="width:180px;height:110px;">
+            <circle cx="100" cy="60" r="50" stroke="rgba(0,212,255,.2)" stroke-width="1" stroke-dasharray="4 6"/>
+            <g style="transform-origin:100px 60px;animation:spin1 12s linear infinite;">
+              <circle cx="100" cy="10"  r="6" fill="#00d4ff" opacity=".9"/>
+              <circle cx="148" cy="87" r="6" fill="#00d4ff" opacity=".7"/>
+              <circle cx="52"  cy="87" r="6" fill="#00d4ff" opacity=".7"/>
+              <line x1="100" y1="10" x2="148" y2="87" stroke="#00d4ff" stroke-width="1.5" opacity=".4"/>
+              <line x1="148" y1="87" x2="52"  y2="87" stroke="#00d4ff" stroke-width="1.5" opacity=".4"/>
+              <line x1="52"  y1="87" x2="100" y2="10" stroke="#00d4ff" stroke-width="1.5" opacity=".4"/>
+            </g>
+            <circle cx="100" cy="60" r="8" fill="#f5a623" opacity=".9"/>
+            <circle cx="100" cy="60" r="14" stroke="#f5a623" stroke-width="1" opacity=".3" style="animation:pulse 2s ease-in-out infinite;"/>
+            <line x1="100" y1="60" x2="100" y2="16"  stroke="#f5a623" stroke-width="1" opacity=".35"/>
+            <line x1="100" y1="60" x2="144" y2="84"  stroke="#f5a623" stroke-width="1" opacity=".35"/>
+            <line x1="100" y1="60" x2="56"  y2="84"  stroke="#f5a623" stroke-width="1" opacity=".35"/>
+            <circle cx="70" cy="35" r="4" fill="rgba(0,212,255,.6)" style="animation:pulse 2.5s ease-in-out .8s infinite;"/>
+            <circle cx="130" cy="35" r="4" fill="rgba(0,212,255,.6)" style="animation:pulse 2.5s ease-in-out 1.6s infinite;"/>
+            <circle cx="100" cy="95" r="4" fill="rgba(0,212,255,.6)" style="animation:pulse 2.5s ease-in-out .4s infinite;"/>
+          </svg>
+          <div class="era-card-overlay"></div>
+        </div>
+        <div class="s1-era-year">TODAY</div><div class="s1-era-name">Artificial Intelligence</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 2: OPERATOR → OWNER (PRESERVED EXACTLY — Scott approved) ══ -->
+<div class="scene" id="s2">
+  <div class="s2-left">
+    <div class="op-icon">
+      <svg viewBox="0 0 160 160" fill="none">
+        <circle cx="80" cy="80" r="70" stroke="rgba(255,107,107,.25)" stroke-width="3"/>
+        <path d="M 80 20 A 60 60 0 0 1 140 80" stroke="#ff6b6b" stroke-width="6" stroke-linecap="round"
+          style="animation:spin1 2s linear infinite;transform-origin:80px 80px;"/>
+        <path d="M 80 140 A 60 60 0 0 1 20 80" stroke="rgba(255,107,107,.5)" stroke-width="6" stroke-linecap="round"
+          style="animation:spin1 2s linear infinite;transform-origin:80px 80px;"/>
+        <polygon points="140,80 128,68 152,68" fill="#ff6b6b" style="animation:spin1 2s linear infinite;transform-origin:80px 80px;"/>
+        <polygon points="20,80 8,92 32,92" fill="rgba(255,107,107,.5)" style="animation:spin1 2s linear infinite;transform-origin:80px 80px;"/>
+      </svg>
+    </div>
+    <div class="s2-label">OPERATOR</div>
+    <div class="s2-traits">Drowning in tasks.<br>Reactive. Busy.<br>Spinning.</div>
+  </div>
+  <div class="s2-vs"><div class="vs-arrow">→</div></div>
+  <div class="s2-right">
+    <div class="own-icon">
+      <svg viewBox="0 0 160 160" fill="none">
+        <circle cx="80" cy="80" r="70" stroke="rgba(0,212,255,.2)" stroke-width="3"/>
+        <polyline points="24,120 60,85 90,65 130,28" stroke="#00d4ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+          style="stroke-dasharray:200;stroke-dashoffset:200;animation:drawLine 1.5s ease 18.5s forwards;"/>
+        <polygon points="130,28 118,42 142,42" fill="#00d4ff" style="opacity:0;animation:fadeIn .4s ease 19.8s forwards;"/>
+        <circle cx="130" cy="28" r="8" fill="#00d4ff" style="opacity:0;animation:fadeIn .4s ease 19.8s forwards;"/>
+      </svg>
+    </div>
+    <div class="s2-label">OWNER</div>
+    <div class="s2-traits">Sets the strategy.<br>Systems execute.<br>Leverage wins.</div>
+  </div>
+  <div class="s2-question">Will you <span>lead</span> that change — or just manage it?</div>
+</div>
+
+<!-- ══ SCENE 3: 15 HOURS ══ -->
+<div class="scene" id="s3">
+  <div style="position:relative;text-align:center;">
+    <div class="s3-eyebrow">THE MISSION</div>
+    <div class="buyback-wrap">
+      <div class="bb-w bb-buy">BUY</div>
+      <div class="bb-w bb-back">BACK</div>
+      <div class="bb-w bb-yt">YOUR TIME</div>
+    </div>
+    <div class="s3-number" id="s3num">15</div>
+    <div class="s3-unit">Hours Reclaimed Every Week</div>
+    <div class="s3-sub">Not marginal gains. A strategic asset.</div>
+    <div class="s3-bars" id="s3bars"></div>
+  </div>
+  <!-- Quote: VTT 0:54.56 + 0:57.00 -->
+  <div class="s3-quote">
+    <div class="s3-quote-flash"></div>
+    <div class="s3-q1">"AI isn't coming for your job —</div>
+    <div class="s3-q2">The person using AI is coming for yours."</div>
+  </div>
+</div>
+
+<!-- ══ SCENE 4: CONFIDENCE GAP ══ -->
+<div class="scene" id="s4">
+  <div style="width:100%;max-width:1600px;text-align:center;">
+    <div class="s4-line1">The real gap isn't <span>technical.</span></div>
+    <div class="s4-line2">It's <span>psychological.</span></div>
+    <div class="gap-track"><div class="gap-fill"></div><div class="gap-fill2"></div></div>
+    <div class="gap-labels">
+      <div class="gap-label left">KNOWING</div>
+      <div class="gap-label right">DOING</div>
+    </div>
+    <div class="gap-name">
+      <div class="gap-name-scanwrap">THE AI CONFIDENCE GAP<div class="gap-scanline"></div></div>
+    </div>
+    <div class="gap-desc">The space between knowing you should use AI — and actually installing it in your workflow.</div>
+    <div class="gap-bridge">From <span>confusion to certainty.</span> From waiting to winning.</div>
+    <div class="kd-wrap">
+      <div class="kd-word kd-knowing">KNOWING</div>
+      <div class="kd-word kd-doing">DOING</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 6: FOUR LEVERS — starts at 87s, exact VTT sync ══ -->
+<div class="scene" id="s6">
+  <div class="s6-header">
+    <div class="s6-chip">The Framework</div>
+    <div class="s6-title">FOUR LEVERS</div>
+  </div>
+  <div class="s6-levers">
+
+    <!-- Lever 1: 92.5s — "Level one, activate" VTT 1:32.56 -->
+    <div class="lever" id="lev1">
+      <div class="lever-num">Lever 01</div>
+      <div class="lever-icon">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="16" r="8" fill="#f5a623" opacity=".9"/>
+          <circle cx="16" cy="58" r="8" fill="#f5a623" opacity=".7"/>
+          <circle cx="64" cy="58" r="8" fill="#f5a623" opacity=".7"/>
+          <circle cx="40" cy="40" r="5" fill="#f5a623"/>
+          <line x1="40" y1="24" x2="40" y2="35" stroke="#f5a623" stroke-width="2" opacity=".5"/>
+          <line x1="23" y1="53" x2="36" y2="44" stroke="#f5a623" stroke-width="2" opacity=".5"/>
+          <line x1="57" y1="53" x2="44" y2="44" stroke="#f5a623" stroke-width="2" opacity=".5"/>
+          <line x1="24" y1="58" x2="56" y2="58" stroke="#f5a623" stroke-width="1.5" opacity=".3" stroke-dasharray="4 4"/>
+        </svg>
+      </div>
+      <div class="lever-name">ACTIVATE</div>
+      <div class="lever-text">Train AI as your second brain.<br>Your voice. Your edge.</div>
+    </div>
+
+    <!-- Lever 2: 114.2s — "Level two, accelerate" VTT 1:54.20 -->
+    <div class="lever" id="lev2">
+      <div class="lever-num">Lever 02</div>
+      <div class="lever-icon">
+        <svg viewBox="0 0 80 80" fill="none">
+          <line x1="8"  y1="24" x2="48" y2="24" stroke="#f5a623" stroke-width="4" stroke-linecap="round"
+            style="stroke-dasharray:40;stroke-dashoffset:40;animation:drawLine 1s ease 115.2s forwards;"/>
+          <line x1="18" y1="40" x2="58" y2="40" stroke="#f5a623" stroke-width="6" stroke-linecap="round"
+            style="stroke-dasharray:40;stroke-dashoffset:40;animation:drawLine 1s ease 115.4s forwards;"/>
+          <line x1="8"  y1="56" x2="48" y2="56" stroke="#f5a623" stroke-width="4" stroke-linecap="round"
+            style="stroke-dasharray:40;stroke-dashoffset:40;animation:drawLine 1s ease 115.6s forwards;"/>
+          <polygon points="60,40 44,30 44,50" fill="#f5a623" style="opacity:0;animation:fadeIn .3s ease 116.2s forwards;"/>
+          <circle cx="72" cy="40" r="6" fill="#00d4ff" style="opacity:0;animation:fadeIn .3s ease 116.4s forwards;"/>
+        </svg>
+      </div>
+      <div class="lever-name">ACCELERATE</div>
+      <div class="lever-text">Blank page to strategic outline<br>in 90 seconds.</div>
+    </div>
+
+    <!-- Lever 3: 138.2s — "Level three, amplify" VTT 2:18.16 -->
+    <div class="lever" id="lev3">
+      <div class="lever-num">Lever 03</div>
+      <div class="lever-icon">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="20" cy="40" r="4" fill="#f5a623"/>
+          <path d="M 28 28 A 17 17 0 0 1 28 52" stroke="#f5a623" stroke-width="3" stroke-linecap="round"
+            style="opacity:.9;stroke-dasharray:30;stroke-dashoffset:30;animation:drawLine .7s ease 139.2s forwards;"/>
+          <path d="M 36 18 A 29 29 0 0 1 36 62" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round"
+            style="opacity:.65;stroke-dasharray:50;stroke-dashoffset:50;animation:drawLine .8s ease 139.7s forwards;"/>
+          <path d="M 44 10 A 39 39 0 0 1 44 70" stroke="#f5a623" stroke-width="2" stroke-linecap="round"
+            style="opacity:.4;stroke-dasharray:65;stroke-dashoffset:65;animation:drawLine 1s ease 140.2s forwards;"/>
+          <path d="M 54 4 A 51 51 0 0 1 54 76" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"
+            style="opacity:.25;stroke-dasharray:80;stroke-dashoffset:80;animation:drawLine 1.2s ease 140.7s forwards;"/>
+        </svg>
+      </div>
+      <div class="lever-name">AMPLIFY</div>
+      <div class="lever-text">One idea. Fifty outputs.<br>A movement.</div>
+    </div>
+
+    <!-- Lever 4: 166s — "Level four, augment" VTT 2:46.04 -->
+    <div class="lever" id="lev4">
+      <div class="lever-num">Lever 04</div>
+      <div class="lever-icon">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="18" r="9" stroke="#f5a623" stroke-width="3"/>
+          <path d="M 28 50 Q 28 36 40 36 Q 52 36 52 50" stroke="#f5a623" stroke-width="3" stroke-linecap="round"/>
+          <line x1="52" y1="36" x2="68" y2="24" stroke="#00d4ff" stroke-width="2" opacity=".7"
+            style="stroke-dasharray:22;stroke-dashoffset:22;animation:drawLine .6s ease 167s forwards;"/>
+          <line x1="52" y1="42" x2="72" y2="42" stroke="#00d4ff" stroke-width="2" opacity=".7"
+            style="stroke-dasharray:22;stroke-dashoffset:22;animation:drawLine .6s ease 167.2s forwards;"/>
+          <line x1="52" y1="48" x2="68" y2="60" stroke="#00d4ff" stroke-width="2" opacity=".7"
+            style="stroke-dasharray:22;stroke-dashoffset:22;animation:drawLine .6s ease 167.4s forwards;"/>
+          <circle cx="70" cy="22" r="5" fill="#00d4ff" style="opacity:0;animation:fadeIn .3s ease 167.8s forwards;"/>
+          <circle cx="74" cy="42" r="5" fill="#00d4ff" style="opacity:0;animation:fadeIn .3s ease 168s forwards;"/>
+          <circle cx="70" cy="62" r="5" fill="#00d4ff" style="opacity:0;animation:fadeIn .3s ease 168.2s forwards;"/>
+        </svg>
+      </div>
+      <div class="lever-name">AUGMENT</div>
+      <div class="lever-text">Lead a multidisciplinary AI<br>war room.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SCENE 7: ANIMATED CTA — YOUR NEXT STEP ══ -->
+<div class="scene" id="s7">
+  <div class="cta-rings-wrap">
+    <div class="cta-ring r1"></div>
+    <div class="cta-ring r2"></div>
+    <div class="cta-ring r3"></div>
+  </div>
+  <div class="cta-content">
+    <div class="cta-eyebrow">YOUR NEXT STEP</div>
+    <div class="cta-headline">Reclaim <span class="cta-gold">15 Hours</span><br>Every Week</div>
+    <div class="cta-sub">Find your AI confidence gap in 60 seconds</div>
+    <div class="cta-divider"></div>
+    <div class="cta-steps">
+      <div class="cta-step step1">
+        <div class="step-num">1</div>
+        <div class="step-label">Find Your Gaps</div>
+      </div>
+      <div class="cta-step step2">
+        <div class="step-num">2</div>
+        <div class="step-label">Claim Your<br>15 Hours</div>
+      </div>
+      <div class="cta-step step3">
+        <div class="step-num">3</div>
+        <div class="step-label">Do the Work<br>That Matters</div>
+      </div>
+    </div>
+    <div class="cta-btn">Take the 60-Second AI Quiz →</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('particles');
+canvas.width=1920; canvas.height=1080;
+const ctx=canvas.getContext('2d');
+const particles=Array.from({length:120},()=>({
+  x:Math.random()*1920,y:Math.random()*1080,
+  vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.3,
+  r:Math.random()*2+.5,alpha:Math.random()*.4+.05,
+  color:Math.random()>.5?'0,212,255':'245,166,35'
+}));
+function animParticles(){
+  ctx.clearRect(0,0,1920,1080);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=1920; if(p.x>1920)p.x=0;
+    if(p.y<0)p.y=1080; if(p.y>1080)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.color},${p.alpha})`; ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+/* Film grain overlay — animated canvas at opacity 0.04 */
+const grainCanvas=document.createElement('canvas');
+grainCanvas.width=1920;grainCanvas.height=1080;
+grainCanvas.style.cssText='position:absolute;top:0;left:0;z-index:98;opacity:0.04;pointer-events:none;mix-blend-mode:overlay;';
+document.body.appendChild(grainCanvas);
+const gCtx=grainCanvas.getContext('2d');
+function animGrain(){
+  const img=gCtx.createImageData(1920,1080);
+  const d=img.data;
+  for(let i=0;i<d.length;i+=4){const v=Math.random()*255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=28;}
+  gCtx.putImageData(img,0,0);
+  requestAnimationFrame(animGrain);
+}
+animGrain();
+
+const barsEl=document.getElementById('s3bars');
+for(let i=0;i<15;i++){
+  const b=document.createElement('div');
+  b.className='s3-bar';
+  b.style.cssText=`height:${40+Math.random()*80}px;animation-delay:${53+i*0.12}s`;
+  barsEl.appendChild(b);
+}
+</script>
+</body>
+</html>

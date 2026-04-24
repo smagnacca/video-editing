@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Buy-Back — Custom Composition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        .composition {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(135deg, #0a0e1a 0%, #050505 100%);
+        }
+
+        /* FILM GRAIN OVERLAY */
+        .grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' result='noise' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* SPLIT SCREEN: OPERATOR VS OWNER */
+        .split-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .split-section {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            overflow: hidden;
+        }
+
+        .split-left {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 106, 53, 0.05) 100%);
+            border-right: 3px solid #f5a623;
+        }
+
+        .split-right {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+        }
+
+        .split-content {
+            text-align: center;
+            opacity: 0;
+        }
+
+        .split-label {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .split-left .split-label {
+            color: #ff6b6b;
+        }
+
+        .split-right .split-label {
+            color: #00d4ff;
+        }
+
+        .split-description {
+            font-size: 22px;
+            color: #a0aec0;
+            margin-top: 15px;
+        }
+
+        /* 15-HOUR CLOCK */
+        .clock-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            opacity: 0;
+        }
+
+        .clock-display {
+            font-size: 180px;
+            font-weight: 900;
+            letter-spacing: -8px;
+            background: linear-gradient(135deg, #f5a623 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(245, 166, 35, 0.4));
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock-label {
+            font-size: 28px;
+            color: #f5a623;
+            margin-top: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* FOUR QUADRANTS GRID */
+        .quadrants-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 1600px;
+            height: 700px;
+            opacity: 0;
+        }
+
+        .quadrant {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .quadrant::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .quadrant.active {
+            border-color: #f5a623;
+            background: rgba(245, 166, 35, 0.08);
+        }
+
+        .quadrant.active::before {
+            opacity: 1;
+        }
+
+        .quadrant-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .quadrant-title {
+            font-size: 52px;
+            font-weight: 800;
+            color: #f5a623;
+            margin-bottom: 15px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .quadrant-text {
+            font-size: 20px;
+            color: #ffffff;
+            line-height: 1.6;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            opacity: 0;
+        }
+
+        .cta-rings {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 40px;
+        }
+
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border: 3px solid;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 {
+            border-color: rgba(245, 166, 35, 0.3);
+            animation: pulse-ring 2.5s ease-in-out infinite;
+        }
+
+        .ring-2 {
+            border-color: rgba(0, 212, 255, 0.2);
+            width: 70%;
+            height: 70%;
+            animation: pulse-ring 2.5s ease-in-out 0.3s infinite;
+        }
+
+        .ring-3 {
+            border-color: rgba(245, 166, 35, 0.15);
+            width: 40%;
+            height: 40%;
+            animation: pulse-ring 2.5s ease-in-out 0.6s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .cta-headline {
+            font-size: 96px;
+            font-weight: 900;
+            color: #f5a623;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            opacity: 0;
+        }
+
+        .cta-subheadline {
+            font-size: 32px;
+            color: #00d4ff;
+            margin-bottom: 40px;
+            opacity: 0;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #f5a623 0%, #ff8c42 100%);
+            color: #0a0e1a;
+            font-size: 24px;
+            font-weight: 800;
+            padding: 20px 60px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(245, 166, 35, 0.4);
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .cta-url {
+            font-size: 20px;
+            color: #00d4ff;
+            margin-top: 30px;
+            opacity: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* ANIMATION UTILITIES */
+        .typewriter {
+            overflow: hidden;
+            display: inline-block;
+            border-right: 3px solid #f5a623;
+            white-space: nowrap;
+        }
+
+        /* GOLDEN SVG BORDER ANIMATION */
+        .golden-border-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #f5a623 50%, transparent 100%);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="composition">
+    <!-- FILM GRAIN -->
+    <div class="grain"></div>
+
+    <!-- SECTION 1: SPLIT SCREEN (Operator vs Owner) -->
+    <div class="split-screen" id="splitScreen">
+        <div class="split-section split-left">
+            <div class="split-content">
+                <div class="split-label">THE OPERATOR</div>
+                <div style="font-size: 120px; margin: 20px 0; opacity: 0.6;">🔄</div>
+                <div class="split-description">Drowning in Tasks<br/>Spinning, Busy, Reactive</div>
+            </div>
+        </div>
+        <div class="split-section split-right">
+            <div class="split-content">
+                <div class="split-label">THE OWNER</div>
+                <div style="font-size: 120px; margin: 20px 0;">⚡</div>
+                <div class="split-description">Reclaimed Time<br/>Strategic, Leveraged, Calm</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: 15-HOUR CLOCK -->
+    <div class="clock-container" id="clockContainer">
+        <div class="clock-display" id="clockDisplay">00:00:00</div>
+        <div class="clock-label">15 HOURS / WEEK</div>
+    </div>
+
+    <!-- SECTION 3: FOUR LEVERS QUADRANTS -->
+    <div class="quadrants-grid" id="quadrantsGrid">
+        <div class="quadrant" id="quad1">
+            <div class="quadrant-icon">🧠</div>
+            <div class="quadrant-title">ACTIVATE</div>
+            <div class="quadrant-text">Train AI as your second brain. Your voice. Your constraints. Your edge.</div>
+        </div>
+        <div class="quadrant" id="quad2">
+            <div class="quadrant-icon">⚡</div>
+            <div class="quadrant-title">ACCELERATE</div>
+            <div class="quadrant-text">From blank page to strategic outline in 90 seconds. Friction gone.</div>
+        </div>
+        <div class="quadrant" id="quad3">
+            <div class="quadrant-icon">📚</div>
+            <div class="quadrant-title">AMPLIFY</div>
+            <div class="quadrant-text">One core idea. Fifty authentic outputs. A masterpiece becomes a movement.</div>
+        </div>
+        <div class="quadrant" id="quad4">
+            <div class="quadrant-icon">🚀</div>
+            <div class="quadrant-title">AUGMENT</div>
+            <div class="quadrant-text">Lead a war room. 3-day research. Done in 30 minutes. Scale without hiring.</div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: CTA -->
+    <div class="cta-section" id="ctaSection">
+        <div class="cta-rings">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+        </div>
+        <div class="cta-headline" id="ctaHeadline">60-SECOND AI QUIZ</div>
+        <div class="cta-subheadline" id="ctaSubheadline">Identify Your Leverage Points</div>
+        <button class="cta-button" id="ctaButton">START QUIZ</button>
+        <div class="cta-url" id="ctaUrl">60-second-ai-quiz.netlify.app</div>
+    </div>
+</div>
+
+<script>
+    const timeline = gsap.timeline({ defaults: { duration: 0.6, ease: 'power2.out' } });
+
+    // SECTION 1: Split Screen (0:00 - 0:30)
+    timeline
+        .fromTo('.split-content', { opacity: 0, x: (i) => i === 0 ? -60 : 60 }, { opacity: 1, x: 0 }, 0.1)
+        .fromTo('.split-left', { borderColor: 'transparent' }, { borderColor: '#f5a623' }, 0)
+        .to('.split-section', { backgroundColor: 'rgba(255, 255, 255, 0.02)' }, 0.5, '<');
+
+    // SECTION 2: Clock (0:30 - 1:15)
+    timeline
+        .fromTo('#clockContainer', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1 }, 1.5)
+        .fromTo('#clockDisplay', { innerHTML: '00:00:00' },
+            { innerHTML: '15:00:00', duration: 3, ease: 'linear', onUpdate() {
+                let hours = Math.floor(this.progress() * 15);
+                let mins = Math.floor((this.progress() * 15 - hours) * 60);
+                document.getElementById('clockDisplay').innerHTML =
+                    `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:00`;
+            }}, 1.7);
+
+    // SECTION 3: Four Levers (1:15 - 2:15)
+    timeline.fromTo('#quadrantsGrid', { opacity: 0 }, { opacity: 1 }, 2.8);
+
+    for (let i = 1; i <= 4; i++) {
+        timeline.fromTo(`#quad${i}`,
+            { opacity: 0, transform: 'scale(0.8)' },
+            { opacity: 1, transform: 'scale(1)' },
+            2.9 + (i - 1) * 0.4);
+
+        timeline.fromTo(`#quad${i}`, { borderColor: 'rgba(0, 212, 255, 0.2)' },
+            { borderColor: '#f5a623' }, 2.95 + (i - 1) * 0.4);
+    }
+
+    // SECTION 4: CTA (2:15 - 2:46)
+    timeline.fromTo('#ctaSection', { opacity: 0 }, { opacity: 1 }, 4.2);
+    timeline.fromTo('#ctaHeadline', { opacity: 0, y: -40 }, { opacity: 1, y: 0 }, 4.3);
+    timeline.fromTo('#ctaSubheadline', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, 4.4);
+    timeline.fromTo('#ctaButton', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 }, 4.5);
+    timeline.fromTo('#ctaUrl', { opacity: 0 }, { opacity: 1 }, 4.6);
+
+    // Render duration
+    gsap.set(document.body, { '--duration': timeline.duration() });
+</script>
+
+</body>
+</html>

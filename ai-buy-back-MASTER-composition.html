@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Buy-Back — Master Composition (Level 4)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        .composition {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(135deg, #0a0e1a 0%, #050505 100%);
+        }
+
+        /* BACKGROUND GRADIENT ANIMATION */
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(245, 166, 35, 0.05) 0%, transparent 50%);
+            opacity: 0.3;
+            z-index: 1;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* FILM GRAIN */
+        .grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' result='noise' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* AVATAR PIP (Top Right Corner) */
+        .avatar-pip {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 390px;
+            height: 390px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(245, 166, 35, 0.1) 100%);
+            border: 3px solid #f5a623;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 900;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(245, 166, 35, 0.3), inset 0 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .avatar-pip.show {
+            opacity: 1;
+        }
+
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            background: radial-gradient(circle at center, rgba(245, 166, 35, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            animation: avatarPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* MAIN CONTENT AREA (Center Stage) */
+        .main-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        /* SPLIT SCREEN: OPERATOR VS OWNER */
+        .split-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            opacity: 0;
+        }
+
+        .split-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 60px;
+            overflow: hidden;
+        }
+
+        .split-left {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 106, 53, 0.02) 100%);
+            border-right: 3px solid #f5a623;
+        }
+
+        .split-right {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 212, 255, 0.02) 100%);
+        }
+
+        .split-content {
+            text-align: center;
+            opacity: 0;
+        }
+
+        .split-label {
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            line-height: 1.1;
+        }
+
+        .split-left .split-label {
+            color: #ff6b6b;
+        }
+
+        .split-right .split-label {
+            color: #00d4ff;
+        }
+
+        .split-icon {
+            font-size: 140px;
+            margin: 30px 0;
+            opacity: 0.8;
+        }
+
+        .split-description {
+            font-size: 28px;
+            color: #a0aec0;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        /* 15-HOUR CLOCK */
+        .clock-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            opacity: 0;
+        }
+
+        .clock-display {
+            font-size: 200px;
+            font-weight: 900;
+            letter-spacing: -10px;
+            background: linear-gradient(135deg, #f5a623 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(245, 166, 35, 0.4));
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock-label {
+            font-size: 36px;
+            color: #f5a623;
+            margin-top: 30px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        /* FOUR QUADRANTS GRID */
+        .quadrants-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 1500px;
+            height: 650px;
+            opacity: 0;
+        }
+
+        .quadrant {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(0, 212, 255, 0.15);
+            border-radius: 16px;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .quadrant::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .quadrant.active {
+            border-color: #f5a623;
+            background: rgba(245, 166, 35, 0.06);
+        }
+
+        .quadrant.active::before {
+            opacity: 1;
+        }
+
+        .quadrant-icon {
+            font-size: 100px;
+            margin-bottom: 25px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .quadrant-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #f5a623;
+            margin-bottom: 20px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .quadrant-text {
+            font-size: 22px;
+            color: #ffffff;
+            line-height: 1.5;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* FINANCIAL COMPARISON CARDS */
+        .financial-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 1600px;
+            opacity: 0;
+        }
+
+        .financial-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(0, 212, 255, 0.12);
+            border-radius: 14px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .financial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .financial-card.highlight {
+            border-color: #f5a623;
+            background: rgba(245, 166, 35, 0.08);
+        }
+
+        .card-income {
+            font-size: 44px;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-label {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .annual-value {
+            font-size: 40px;
+            font-weight: 900;
+            color: #f5a623;
+            margin: 20px 0 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .annual-label {
+            font-size: 12px;
+            color: #a0aec0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            opacity: 0;
+        }
+
+        .cta-rings {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 40px;
+        }
+
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border: 3px solid;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 { border-color: rgba(245, 166, 35, 0.3); animation: pulse-ring 2.5s ease-in-out infinite; }
+        .ring-2 { border-color: rgba(0, 212, 255, 0.2); width: 70%; height: 70%; animation: pulse-ring 2.5s ease-in-out 0.3s infinite; }
+        .ring-3 { border-color: rgba(245, 166, 35, 0.15); width: 40%; height: 40%; animation: pulse-ring 2.5s ease-in-out 0.6s infinite; }
+
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .cta-headline {
+            font-size: 88px;
+            font-weight: 900;
+            color: #f5a623;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            opacity: 0;
+        }
+
+        .cta-subheadline {
+            font-size: 32px;
+            color: #00d4ff;
+            margin-bottom: 40px;
+            opacity: 0;
+        }
+
+        .cta-url {
+            font-size: 22px;
+            color: #00d4ff;
+            margin-top: 30px;
+            opacity: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="composition">
+    <!-- BACKGROUND GRADIENTS -->
+    <div class="bg-gradient"></div>
+
+    <!-- FILM GRAIN -->
+    <div class="grain"></div>
+
+    <!-- AVATAR PIP (Top Right) -->
+    <div class="avatar-pip" id="avatarPip">
+        <img src="file:///Users/scottmagnacca/Projects/storyselling-landing/scott-headshot.png" alt="Scott" class="avatar-image">
+        <div class="avatar-glow"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- SPLIT SCREEN (0:12-0:42) -->
+        <div class="split-screen" id="splitScreen">
+            <div class="split-section split-left">
+                <div class="split-content">
+                    <div class="split-label">THE OPERATOR</div>
+                    <div class="split-icon">⚙️</div>
+                    <div class="split-description">Drowning<br/>Spinning<br/>Reactive</div>
+                </div>
+            </div>
+            <div class="split-section split-right">
+                <div class="split-content">
+                    <div class="split-label">THE OWNER</div>
+                    <div class="split-icon">⚡</div>
+                    <div class="split-description">Reclaimed<br/>Strategic<br/>Calm</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15-HOUR CLOCK (0:42-1:30) -->
+        <div class="clock-container" id="clockContainer">
+            <div class="clock-display" id="clockDisplay">00:00:00</div>
+            <div class="clock-label">15 HOURS / WEEK</div>
+        </div>
+
+        <!-- FINANCIAL GRID (0:42-1:30) -->
+        <div class="financial-grid" id="financialGrid">
+            <div class="financial-card" id="card1">
+                <div class="card-income">$50,000</div>
+                <div class="card-label">Entry Level</div>
+                <div class="annual-value" id="value1">$18,772</div>
+                <div class="annual-label">annually freed</div>
+            </div>
+            <div class="financial-card highlight" id="card2">
+                <div class="card-income">$150,000</div>
+                <div class="card-label">Manager</div>
+                <div class="annual-value" id="value2">$56,212</div>
+                <div class="annual-label">annually freed</div>
+            </div>
+            <div class="financial-card" id="card3">
+                <div class="card-income">$500,000</div>
+                <div class="card-label">Executive</div>
+                <div class="annual-value" id="value3">$187,460</div>
+                <div class="annual-label">annually freed</div>
+            </div>
+        </div>
+
+        <!-- FOUR LEVERS (1:30-2:30) -->
+        <div class="quadrants-grid" id="quadrantsGrid">
+            <div class="quadrant" id="quad1">
+                <div class="quadrant-icon">🧠</div>
+                <div class="quadrant-title">ACTIVATE</div>
+                <div class="quadrant-text">Train AI as your second brain</div>
+            </div>
+            <div class="quadrant" id="quad2">
+                <div class="quadrant-icon">⚡</div>
+                <div class="quadrant-title">ACCELERATE</div>
+                <div class="quadrant-text">90 seconds from concept to outline</div>
+            </div>
+            <div class="quadrant" id="quad3">
+                <div class="quadrant-icon">📚</div>
+                <div class="quadrant-title">AMPLIFY</div>
+                <div class="quadrant-text">One idea. Fifty outputs.</div>
+            </div>
+            <div class="quadrant" id="quad4">
+                <div class="quadrant-icon">🚀</div>
+                <div class="quadrant-title">AUGMENT</div>
+                <div class="quadrant-text">Lead a multidisciplinary war room</div>
+            </div>
+        </div>
+
+        <!-- CTA (2:30-2:58) -->
+        <div class="cta-section" id="ctaSection">
+            <div class="cta-rings">
+                <div class="ring ring-1"></div>
+                <div class="ring ring-2"></div>
+                <div class="ring ring-3"></div>
+            </div>
+            <div class="cta-headline" id="ctaHeadline">TAKE THE QUIZ</div>
+            <div class="cta-subheadline" id="ctaSubheadline">Identify Your Leverage Points</div>
+            <div class="cta-url" id="ctaUrl">60-second-ai-quiz.netlify.app</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const timeline = gsap.timeline({ defaults: { duration: 0.7, ease: 'power2.out' } });
+
+    // Avatar appears after 12s (when Jensen clip ends)
+    timeline.to('#avatarPip', { opacity: 1 }, 1.2);
+
+    // SPLIT SCREEN (0:12-0:42, 30 seconds)
+    timeline.fromTo('#splitScreen', { opacity: 0 }, { opacity: 1 }, 1.2);
+    timeline.fromTo('.split-content', { opacity: 0, x: (i) => i === 0 ? -50 : 50 }, { opacity: 1, x: 0 }, 1.3);
+
+    // FINANCIAL GRID + CLOCK (0:42-1:30, overlapping)
+    timeline.fromTo('#clockContainer', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1 }, 3);
+    timeline.fromTo('#clockDisplay', { innerHTML: '00:00:00' },
+        { innerHTML: '15:00:00', duration: 2.5, ease: 'linear', onUpdate() {
+            let hours = Math.floor(this.progress() * 15);
+            let mins = Math.floor((this.progress() * 15 - hours) * 60);
+            document.getElementById('clockDisplay').innerHTML = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:00`;
+        }}, 3.1);
+
+    timeline.fromTo('#financialGrid', { opacity: 0 }, { opacity: 1 }, 3.3);
+    for (let i = 1; i <= 3; i++) {
+        timeline.fromTo(`#card${i}`,
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0 },
+            3.4 + (i - 1) * 0.15);
+
+        const values = [18772, 56212, 187460];
+        timeline.fromTo(`#value${i}`,
+            { innerHTML: '$0' },
+            { innerHTML: '$' + values[i - 1].toLocaleString(), duration: 1, ease: 'power1.out', onUpdate() {
+                let current = Math.floor(this.progress() * values[i - 1]);
+                document.querySelector(`#value${i}`).innerHTML = '$' + current.toLocaleString();
+            }},
+            3.5 + (i - 1) * 0.15);
+    }
+
+    // FOUR LEVERS (1:30-2:30, 60 seconds)
+    timeline.fromTo('#quadrantsGrid', { opacity: 0 }, { opacity: 1 }, 4.9);
+    for (let i = 1; i <= 4; i++) {
+        timeline.fromTo(`#quad${i}`,
+            { opacity: 0, transform: 'scale(0.8)' },
+            { opacity: 1, transform: 'scale(1)' },
+            5 + (i - 1) * 0.3);
+    }
+
+    // CTA (2:30-2:58)
+    timeline.fromTo('#ctaSection', { opacity: 0 }, { opacity: 1 }, 7.9);
+    timeline.fromTo('#ctaHeadline', { opacity: 0, y: -40 }, { opacity: 1, y: 0 }, 8);
+    timeline.fromTo('#ctaSubheadline', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, 8.1);
+    timeline.fromTo('#ctaUrl', { opacity: 0 }, { opacity: 1 }, 8.2);
+</script>
+
+</body>
+</html>
