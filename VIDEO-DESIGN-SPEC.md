@@ -228,3 +228,92 @@ These standards apply to **any video, animation, or audio production work** acro
 - Any HTML/web animations that share design tokens (colors, fonts, animation timing)
 
 Before starting any new video, verify: colors match brand palette, emphasis words use gold not green, all animations use spring physics or crossfades, cards are centered with max 700px width, and audio has been Whisper-verified.
+
+---
+
+## 11. Split-Screen PIP (Picture-in-Picture) Best Practices
+
+### When to Use
+When a talking-head video (e.g., HeyGen avatar) needs to run alongside on-screen graphics/animations. Shows both presenter AND compelling visuals simultaneously.
+
+### Sizing & Positioning
+- **Avatar size:** 390×219 (16:9 aspect ratio)
+- **Position:** `x=W-w-60:y=50` → top-right corner with 60px right margin, 50px top margin
+- **Border:** 2px solid gold (`#f5a623`) with subtle glow for brand integration
+- **Leave space:** Padding-right of 480px on `.scene` containers prevents text overlapping avatar zone
+
+### ffmpeg Overlay Filter
+```bash
+ffmpeg -i graphics.mp4 -i avatar.mp4 \
+  -filter_complex "[1:v]scale=390:219[pip]; [0:v][pip]overlay=x=W-w-60:y=50[v]" \
+  -map "[v]" -c:v libx264 output.mp4
+```
+
+### Audio-Video Sync for HeyGen
+HeyGen's mouth movements sometimes lag the audio by 0.2–0.3s. Fix with `setpts`:
+```bash
+[1:v]scale=390:219,setpts=PTS-0.25/TB[pip]  # Shift video 0.25s earlier
+```
+Test by watching the avatar's mouth — should open/close AS narration is spoken, not after.
+
+### Compose Graphics with PIP in Mind
+Design all left-side text/graphics knowing the right 25% is occupied. Use `padding-right` to push content away.
+
+---
+
+## 12. GSAP Timeline Sync to Whisper Timestamps
+
+### Problem
+GSAP animations fire at absolute timeline positions, but narration timestamps come from Whisper VTT (word-level). If animations fire after words are spoken, the visual feels laggy.
+
+### Solution
+1. Run Whisper on final narration audio: `whisper file.mp3 --model base --output_format vtt --word_timestamps True`
+2. Parse `.vtt` file → extract spoken-word timestamps (e.g., "career" at 7.08s)
+3. Set GSAP fire time 0.2–0.4s BEFORE the word: `tl.from("#element", {...}, 6.8)` for "career" at 7.08s
+4. Test with independent QA agent that checks every GSAP time against VTT cues
+
+### QA Template
+- Element name | GSAP fire time | VTT cue | Delta | Status (PASS/WARN/FAIL)
+- PASS = delta within [-0.6s, +0.1s] (fires just before word hits)
+- WARN = delta within [-1.0s, -0.6s] (fires a bit early but acceptable)
+- FAIL = delta outside range (fires too late OR way too early)
+
+### Global Timing Offset
+If all animations lag equally, shift entire timeline uniformly. Example: shift all times -0.3s:
+```javascript
+// In GSAP: tl.from("#s1", {...}, 0.2) becomes tl.from("#s1", {...}, 0.0)
+// This preserves relative timing while fixing lag-behind-narration globally
+```
+
+---
+
+## 13. Hyperframes Render Gotchas
+
+### Never Pipe to `head` or `tail`
+```bash
+# ❌ WRONG — kills the render process
+npx hyperframes render composition/ > /tmp/log.log 2>&1 | head -5
+
+# ✓ CORRECT — background process captures full log
+nohup npx hyperframes render composition/ > /tmp/log.log 2>&1 &
+```
+
+### Clip Visibility
+All clips must be "on screen" when GSAP tweens fire:
+- If `data-start="40"` but tween fires at 39.4s, animation runs hidden
+- Fix: set `data-start` 1s earlier than first animation in that clip
+
+### Audio Normalization (Critical)
+For recorded narration, always normalize:
+```bash
+ffmpeg -i raw.mp3 -af "loudnorm=I=-14:TP=-1.5:LRA=11" normalized.mp3
+ffmpeg -i normalized.mp3 -af "volumedetect" -f null /dev/null  # verify mean dB
+```
+Target: -14 to -18 dBFS mean (broadcast standard). Never use highpass filter on voice (makes it robotic).
+
+### Duration Anchor
+Always include a duration anchor at the end of your GSAP timeline:
+```javascript
+tl.to({}, { duration:30 }, 0);  // for 30-second composition
+```
+Without this, Hyperframes may render only partial length.

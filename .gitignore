@@ -13,3 +13,40 @@ remotion-project/public/audio/
 ai-summit-video/out/
 remotion-project/out/
 .claude/worktrees/
+# QA frames and verification screenshots
+QA_*.jpg
+frame_*.jpg
+qa_*.jpg
+qa_*.txt
+# Temp files and build artifacts
+__pycache__/
+*.pyc
+# Development scripts
+*-render*.py
+render_*.sh
+hf_*.py
+# Uploads and test files
+*.webm
+*.mov
+*.caf
+test-*.mp3
+notebooklm-*.js
+record-*.sh
+# Notebooks and config
+SCRIPT-*.md
+HYPERFRAMES-*.md
+CLAUDE-*.md
+hook_*.png
+cta.png
+intro_bg.png
+A_headline_*.jpg
+B_counter*.jpg
+C*_*.jpg
+D_*.jpg
+E_*.jpg
+F_*.jpg
+# Assets generated during development
+assets/*composition*
+assets/*-composition*
+practical-ai-promo/
+page@*.webm

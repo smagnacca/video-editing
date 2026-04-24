@@ -2,6 +2,44 @@
 
 ---
 
+## 2026-04-23 (Evening) — Practical AI Promo FINAL: Split-Screen PIP, Timing Sync, 10 B-roll Graphics
+
+**Project:** `practical-ai-promo/` — **Final v4 → FINAL** (2:46 complete sandwich video)
+
+**Output:** `practical-ai-FINAL.mp4` on Desktop
+
+### What Was Built & Fixed
+- **Split-screen layout:** HeyGen avatar scaled to 390×219 PIP (top-right golden box), graphics + animations fill left/center
+- **Audio-video sync fix:** Added 0.25s video delay to HeyGen streams to sync mouth movements with narration
+- **GSAP animation timing:** All animations shifted 0.3s earlier so text/graphics fire as words are spoken (not after)
+- **Full Jensen clip:** Entire 50s "AI in the loop" message (not trimmed to 12.56s)
+- **Final splice:** Jensen (50s) + INTRO with avatar PIP (30s) + MIDDLE graphics (60s) + OUTRO with avatar PIP (26s) = 166s total
+- **10 reusable B-roll graphics:** Photorealistic AI-themed HTML/CSS assets saved to `assets/broll/` (neural brain, dashboards, 3×, handshake, sales funnel, knowledge network, time savings, corporate brain, revenue chart, Practical AI card)
+- **QA verified:** Independent agent checked INTRO/OUTRO timing against Whisper VTT timestamps. OUTRO passed 22/22; INTRO had 2 FAIL items (S2 headlines) which were corrected.
+
+### Key Technical Decisions
+1. **PIP overlay approach:** Scale HeyGen to 390×219, use ffmpeg overlay at `x=W-w-60:y=50` (top-right), NOT full-screen composite
+2. **Video delay vs. audio delay:** Applied `setpts=PTS-0.25/TB` to HeyGen video stream (not audio), so mouth sync lands on spoken words without shifting audio track
+3. **GSAP offset uniform:** Shifted all animation fire times 0.3s earlier globally, preserving relative timing between scenes while fixing lag-behind-narration issue
+4. **B-roll as reusable assets:** All 10 graphics saved as standalone HTML files (1920×1080), no dependencies, ready to render individually or integrate into future videos
+
+### Files Modified
+- `intro-composition/index.html` — GSAP timing shifted -0.3s (2 QA-flagged items fixed: #s2-h1 +0.3s, #s2-h2 +0.3s)
+- `outro-composition/index.html` — GSAP timing shifted -0.3s uniformly (QA-verified, no issues found)
+- Global memory: Added `reference_broll_assets.md` to track 10 B-roll graphics location and use cases
+
+### Audio Specs
+- **HeyGen narration:** Volume 1.0
+- **Background music:** Volume 0.03 (per Scott: 0.3/10 scale)
+- **Mix:** amix filter with `duration=first` to match shortest stream
+
+### Next Session Hints
+- B-roll graphics can be rendered individually as 1920×1080 frames and spliced into future videos
+- All timings locked in; no further Whisper re-syncing needed
+- Compositions are production-ready; only change if narration/pacing changes
+
+---
+
 ## 2026-04-23 — Practical AI Promo: Hyperframes Middle Section + Sandwich Assembly Pipeline
 
 **Project:** `practical-ai-promo/` — 60s Hyperframes middle for sandwich video (INTRO + MIDDLE + OUTRO)
