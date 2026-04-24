@@ -2,6 +2,129 @@
 
 ---
 
+## 2026-04-23 — Practical AI Promo: Hyperframes Middle Section + Sandwich Assembly Pipeline
+
+**Project:** `practical-ai-promo/` — 60s Hyperframes middle for sandwich video (INTRO + MIDDLE + OUTRO)
+
+### What Was Built
+- **Sandwich structure:** HeyGen INTRO (30s) + Hyperframes middle (60s) + HeyGen OUTRO (~26s) = ~116s total
+- **Assets saved:** `practical-ai-INTRO.mp4`, `practical-ai-OUTRO.mp4`, `background-music.mp3` (HeyGen royalty-free)
+- **Narration:** Scott's own voice (`Practical AI.m4a`) normalized from -37.7 dB raw → -18 dBFS broadcast standard
+- **Whisper word-level timestamps** used to align all 8 scene cue points to narration
+- **60s composition:** 8 scenes (S1 hook, S1b gap, S2a bridge, S2b Performance, S2c Productivity, S2d Profits, S3 DAYS.NOT.DECADES slam, S4 playbook CTA)
+- **Background music:** HeyGen royalty-free track, `data-volume="0.03"` (per Scott: 0.3/10)
+
+### Audio Normalization Pipeline (Critical — always run for live recordings)
+```bash
+ffmpeg -i raw.m4a raw-clean.mp3
+ffmpeg -i raw-clean.mp3 -af "loudnorm=I=-14:TP=-1.5:LRA=11,highpass=f=80" narration.mp3
+ffmpeg -i narration.mp3 -af "volumedetect" -f null /dev/null  # verify: mean -14 to -18 dBFS
+```
+
+### Bugs Fixed
+- `npx hyperframes render ... | head -5` — pipe to head kills the render process. Always use `nohup ... > /tmp/hf-render.log 2>&1 &`
+- Hyperframes clips must be visible when GSAP tween fires — if data-start="40" but tween fires at 39.4s, animation plays hidden. Fix: set data-start 1s earlier than first animation
+
+### HeyGen Split Points (Whisper VTT on source)
+- INTRO ends: 30.0s | OUTRO starts: 80.9s
+
+### Next Steps
+- Hyperframes render in progress → splice INTRO + MIDDLE + OUTRO
+- Drop final on Desktop + push to GitHub
+
+---
+
+## 2026-04-23 — NotebookLM Video v9 FINAL: Hyperframes Pipeline + Full Assembly
+
+**Output:** `notebooklm-FINAL-v9.mp4` (21MB, 3:05, 1920×1080)
+
+### What Was Built
+Full end-to-end video using Hyperframes (Python/Pillow) for the animation section, spliced with:
+- Jensen Huang hook clip (0–25s from source)
+- Hyperframes animation (`hf_render_batch.py` → `animation_v9.mp4`, 41s)
+- NotebookLM screen recording demo (t=60–148s from Desktop recording, scaled to 1920×1080)
+- Outro (t=170–201s from source)
+
+### Bugs Fixed in `hf_render_batch.py` (v5→v9)
+1. **"OF SALES PREP" faint** — alpha 0.55 → 0.80
+2. **Right MINUTES counter not advancing** — timing offset fixed for right-panel counter
+3. **Section B/C subtitles too small** — font 50 → 62px
+4. **macOS font paths** — hardcoded `/Library/Fonts/` paths for Arial/Helvetica
+
+### Assembly Fix (v8→v9)
+v8 was 95s instead of 185s — root cause: multi-reference to `[0:v]` in filter_complex. Fixed by opening source as 4 separate `-i` inputs with `-ss`/`-t` per segment.
+
+### Screen Recording Discovery
+macOS screen recording filenames use Unicode narrow no-break space (`\u202f`) before "PM". Must use Python `subprocess` with list args — shell quoting doesn't handle it.
+
+### Hyperframes Installation
+- Student kit installed at `hyperframes-student-kit/`
+- CLI v0.4.15, doctor: Node ✓ FFmpeg ✓ Chrome ✓ Docker ✗ (optional) ⚠ Low RAM
+
+### NEW-VIDEO-WIZARD.md Update
+Added Step 0 pipeline chooser (Hyperframes vs Remotion decision tree) based on `memory/two_video_pipelines.md`.
+
+**Commit:** (see git log)
+
+---
+
+## 2026-04-23 — NotebookLM Video v4 FINAL: Layout Bug Fix + Visual QA
+
+**Output:** `notebooklm-FINAL-v4.mp4` (85MB, 3:21, 1920×1080 30fps)
+
+### Root Cause of v3 Layout Bugs (diagnosed from v3)
+Four bugs found and fixed in `render_intro_v4.py`:
+
+1. **Time-gate accumulation** — all `if t>X` conditions evaluate simultaneously in every fresh frame. Text from Phase 1 ("MOST", "SALESPEOPLE", context line, bar) was still being drawn at t=5.0s when the counter appeared. Fix: added upper time bounds (`1.2<t<4.8`, `1.7<t<4.8`, etc.) so all text clears before counter slides in.
+
+2. **Phase 2 WHAT IF overlap** — "WHAT IF" (lt=0.4+, H//2-80) stayed on screen when "45" slid in at lt=3.0 (H//2-50, 220pt). Fix: gated "WHAT IF" to `0.4<lt<2.8`.
+
+3. **`draw_text_on` cx_center bug** — function ignored `cx_center` parameter entirely (`px=W//2-w_//2+x_shift` always). "45" on Phase 2 left side and "5" on right side never actually moved to their x positions. Fix: `base_x = W//2 if cx_center==0 else cx_center`.
+
+4. **FREE. no upper gate** — Phase 3 "FREE." had `if lt>0.8` with no end bound, so it kept rendering behind "NotebookLM" typewriter at lt=9.2+. Fix: `if 0.8<lt<9.2`.
+
+### Additional fixes
+- Checklist x_shift: `int(lp(160,0,xo(cht)))-310` (sliding LEFT, wrong direction) → `int(lp(800,0,xo(cht)))` (slides from right)
+- Unicode ✓ not in Liberation Sans → changed to ">>" prefix (renders correctly)
+
+### QA Protocol (21 frames extracted before render)
+- Every 2–3 seconds from t=1.0 to t=40.5 visually inspected
+- All phase transitions confirmed: clear canvas before new content
+- Left/right positioning verified: "45 MINUTES" LEFT (orange) + countdown RIGHT (white→gold) properly separated
+- "5" gold starburst explosion confirmed at t=26.5s (lt=9.5)
+- "NotebookLM" typewriter clean at t=39s (FREE. gone) ✓
+- Seam frames at t=5s, t=42s, t=55s, t=85s from final output confirmed ✓
+
+### Lesson learned: Time-gate discipline
+Every element must have BOTH a start AND end time gate. `if t>X` with no upper bound causes invisible accumulation bugs that only appear when the renderer draws two elements simultaneously in the same frame. Rule added to memory: always write `if START<t<END` never `if t>START` alone.
+
+---
+
+## 2026-04-22 — NotebookLM Video: Cinematic Animation Rebuild + Audio Fix
+
+**Trigger:** v2 was static PowerPoint-style slides. Scott requested Hollywood-grade animation.
+
+### Changes (v2 → v3)
+- **Audio artifact at 1:21–1:23 removed** — ffmpeg `volume=enable='between(t,81,83)':volume=0` with `-c:v copy` (fast, no re-encode of video stream)
+- **Pre-demo section (0:41–1:22) rebuilt** with cinematic Python PIL renderer:
+  - Phase 1 (0–17s): "MOST / SALESPEOPLE" word slams from above with `back_out` easing, floating particles, counter 30→45 slides in from right with screen shake on landing, underline sweep, "MINUTES OF SALES PREP" reveal
+  - Phase 2 (17–29s): Flash cut, "WHAT IF" scale slam, 45 slides left, countdown 45→5 with per-number slam, gold radial burst + screen pulse on "5" landing, checklist items slide in from right (teal)
+  - Phase 3 (29–41s): "FREE." slams from top with overshoot (back_out s=2.2) + screen shake, pulsing gold glow (precomputed, not per-frame blur), "NotebookLM" typewriter with blinking cursor, subtitle reveal
+- **3-agent pre-render QA protocol applied:** Timing ✓ | Design ✓ | Code ✓
+
+### Technical decisions made to avoid rework
+- Glow layers precomputed (2× GaussianBlur total, not 200+)
+- Pipe render: Python stdout → ffmpeg stdin (no per-frame disk I/O)
+- Ran in background (nohup) — render completes without bash timeout
+- Audio fixed before animation render (parallel work)
+
+### QA Results
+- All brand colors verified: Orange #ff7300, Gold #f5a623, Teal #00e5ff on #0a0e1a → WCAG AA ✓
+- Checklist Y positions (780/852/924) above lower-third (1008) ✓
+- Phase boundaries sum to exactly 41s (510+360+360 frames) ✓
+
+---
+
 ## 2026-04-22 — Claude Cowork Sales Video v5 FINAL + Production Excellence Rules
 
 **Output:** `output/claude-cowork-sales-FINAL.mp4` (14.9MB, 3:20, 1920×1080 30fps)

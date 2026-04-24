@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Practical AI — Middle Section (30s)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0e1a;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+  }
+  .clip { position: absolute; inset: 0; }
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* ── Background glow (persistent) ── */
+  #bg-glow {
+    position: absolute;
+    top: -20%; left: -15%;
+    width: 75%; height: 85%;
+    background: radial-gradient(ellipse at center,
+      rgba(0,90,200,0.20) 0%,
+      rgba(0,40,100,0.08) 45%,
+      rgba(0,0,0,0) 70%);
+    pointer-events: none;
+  }
+  #bg-glow-br {
+    position: absolute;
+    bottom: -10%; right: 0%;
+    width: 40%; height: 40%;
+    background: radial-gradient(ellipse at center,
+      rgba(0,50,80,0.10) 0%,
+      rgba(0,0,0,0) 60%);
+    pointer-events: none;
+  }
+
+  /* ── Lower third (persistent) — must be INSIDE a .clip parent ── */
+  #lower-wrap {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    padding: 0 60px;
+  }
+  #lower-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #f5a623, rgba(245,166,35,0.25), rgba(245,166,35,0));
+  }
+  #lower-name {
+    font-size: 22px; font-weight: 700;
+    color: #fff; letter-spacing: 0.05em;
+  }
+  #lower-creds {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 13px; color: #6a7d92;
+    margin-left: 22px; letter-spacing: 0.04em;
+  }
+
+  /* ── S1: HOOK — gap is growing ── */
+  #s1-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 22px; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: #4a5a6e; margin-bottom: 18px;
+  }
+  #s1-line1 { font-size: 88px; font-weight: 900; color: #6e7d91; text-transform: uppercase; line-height: 1; }
+  #s1-line2 { font-size: 88px; font-weight: 900; color: #6e7d91; text-transform: uppercase; line-height: 1; }
+  #s1-line3 { font-size: 130px; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; margin-top: 8px; }
+
+  /* ── S2: PERFORMANCE ── */
+  .p-sup {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 20px; font-weight: 500;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .p-h1 { font-size: 104px; font-weight: 900; text-transform: uppercase; line-height: 0.95; }
+  .p-h2 { font-size: 104px; font-weight: 900; text-transform: uppercase; line-height: 0.95; }
+  .p-sub {
+    font-size: 42px; font-weight: 300;
+    color: #8a9aaa; margin-top: 20px;
+    max-width: 900px; line-height: 1.3;
+  }
+
+  /* ── S3: PRODUCTIVITY ── */
+  /* (reuses .p-* classes) */
+
+  /* ── S4: SLAM — DAYS NOT DECADES ── */
+  .slam-word {
+    font-size: 220px; font-weight: 900;
+    text-transform: uppercase; line-height: 0.88;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     ROOT — 30 seconds, 30fps, 1920×1080
+════════════════════════════════════════════════════ -->
+<div
+  data-composition-id="practical-ai-middle"
+  data-start="0"
+  data-width="1920"
+  data-height="1080"
+  data-fps="30"
+  data-duration="30"
+>
+
+  <!-- PERSISTENT: Background -->
+  <div class="clip" data-start="0" data-duration="30" data-track-index="0" id="bg">
+    <div id="bg-glow"></div>
+    <div id="bg-glow-br"></div>
+  </div>
+
+  <!-- PERSISTENT: Lower third (clip = full-screen container, lower-wrap = bottom bar inside it) -->
+  <div class="clip" data-start="0" data-duration="30" data-track-index="9">
+    <div id="lower-wrap">
+      <div id="lower-line"></div>
+      <span id="lower-name">Scott Magnacca</span>
+      <span id="lower-creds">Harvard ALM · Babson MBA · 4,127+ Sales Pros Trained</span>
+    </div>
+  </div>
+
+  <!-- ── SCENE 1: HOOK — Gap (0–9s) ── -->
+  <div class="clip scene" data-start="0" data-duration="9" data-track-index="1" id="s1">
+    <div id="s1-label">AI is creating a gap</div>
+    <div id="s1-line1">TOP PERFORMERS</div>
+    <div id="s1-line2">ARE PULLING AHEAD.</div>
+    <div id="s1-line3">EVERY. SINGLE. DAY.</div>
+  </div>
+
+  <!-- ── SCENE 2: PERFORMANCE (9–18s) ── -->
+  <div class="clip scene" data-start="9" data-duration="9" data-track-index="1" id="s2">
+    <div class="p-sup" id="s2-sup" style="color:#00d4ff;">Performance</div>
+    <div class="p-h1" id="s2-h1" style="color:#00d4ff;">MINUTES,</div>
+    <div class="p-h2" id="s2-h2" style="color:#fff;">NOT HOURS.</div>
+    <div class="p-sub" id="s2-sub">
+      Productivity — more output, less burnout.<br>
+      Profits — faster decisions, bigger wins.
+    </div>
+  </div>
+
+  <!-- ── SCENE 3: DAYS NOT DECADES (18–30s) ── -->
+  <div class="clip scene" data-start="18" data-duration="12" data-track-index="1" id="s3">
+    <div id="slam-days" class="slam-word" style="color:#f5a623;">DAYS.</div>
+    <div id="slam-not"  class="slam-word" style="color:#ffffff;">NOT.</div>
+    <div id="slam-dec"  class="slam-word" style="color:#f5a623;">DECADES.</div>
+  </div>
+
+  <!-- AUDIO: narration (drop file here after recording) -->
+  <audio id="narration-audio" class="clip"
+    data-start="0" data-duration="30" data-track-index="10"
+    src="assets/practical-ai-narration.mp3" data-volume="0.9"></audio>
+
+  <!-- AUDIO: background music (very subtle) -->
+  <audio id="bg-music" class="clip"
+    data-start="0" data-duration="30" data-track-index="8"
+    src="assets/background-music.mp3" data-volume="0.04"></audio>
+
+</div><!-- end root -->
+
+<!-- ════════════════════════════════════════════════════
+     GSAP TIMELINE
+════════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// ─── SCENE 1: HOOK (0–9s) ────────────────────────────────────
+tl.from("#s1-label", {
+  opacity: 0, y: -25, duration: 0.4, ease: "power3.out"
+}, 0.15);
+tl.from("#s1-line1", {
+  opacity: 0, y: -70, duration: 0.45, ease: "power4.out"
+}, 0.45);
+tl.from("#s1-line2", {
+  opacity: 0, y: -70, duration: 0.45, ease: "power4.out"
+}, 0.85);
+tl.from("#s1-line3", {
+  opacity: 0, scaleX: 1.12, scaleY: 0.65, duration: 0.5,
+  ease: "back.out(1.7)", transformOrigin: "center center"
+}, 1.5);
+
+// ─── SCENE 2: PERFORMANCE (9–18s) ────────────────────────────
+tl.from("#s2-sup", {
+  opacity: 0, y: -20, duration: 0.35, ease: "expo.out"
+}, 9.15);
+tl.from("#s2-h1", {
+  opacity: 0, x: -90, duration: 0.45, ease: "back.out(1.4)"
+}, 9.5);
+tl.from("#s2-h2", {
+  opacity: 0, x: -90, duration: 0.45, ease: "back.out(1.4)"
+}, 9.9);
+tl.from("#s2-sub", {
+  opacity: 0, y: 25, duration: 0.45, ease: "expo.out"
+}, 10.6);
+
+// Gold pulse on the cyan headline — draws the eye (4 cycles × 0.7s × 2 for yoyo = 5.6s fits in scene)
+tl.to("#s2-h1", {
+  textShadow: "0 0 50px rgba(0,212,255,0.7), 0 0 100px rgba(0,212,255,0.3)",
+  duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: 4
+}, 10.0);
+
+// ─── SCENE 3: DAYS NOT DECADES (18–30s) ──────────────────────
+tl.from("#slam-days", {
+  opacity: 0, y: -130, duration: 0.38, ease: "power4.out"
+}, 18.2);
+tl.from("#slam-not", {
+  opacity: 0, y: -130, duration: 0.38, ease: "power4.out"
+}, 19.1);
+tl.from("#slam-dec", {
+  opacity: 0, y: -130, duration: 0.38, ease: "power4.out"
+}, 20.1);
+
+// Gold pulse glow on DAYS + DECADES — 7.8s window ÷ 0.65s cycle = 11 cycles max
+tl.to("#slam-days, #slam-dec", {
+  textShadow: "0 0 80px rgba(245,166,35,0.85), 0 0 150px rgba(245,166,35,0.4)",
+  duration: 0.65, ease: "sine.inOut", yoyo: true, repeat: 11
+}, 21.0);
+
+// Fade to black at very end
+tl.to("[data-composition-id]", {
+  opacity: 0, duration: 1.2, ease: "power2.in"
+}, 28.8);
+
+// ─── DURATION ANCHOR (mandatory) ─────────────────────────────
+tl.to({}, { duration: 30 }, 0);
+
+window.__timelines["practical-ai-middle"] = tl;
+</script>
+</body>
+</html>

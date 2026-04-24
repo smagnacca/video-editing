@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Practical AI — Middle Section (60s)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Roboto+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0e1a;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+  }
+  .clip { position: absolute; inset: 0; }
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; align-items: center;
+    justify-content: center; flex-direction: column;
+    text-align: center;
+  }
+
+  /* ── Background glow ── */
+  #bg-glow {
+    position: absolute; top: -20%; left: -15%;
+    width: 75%; height: 85%;
+    background: radial-gradient(ellipse at center,
+      rgba(0,90,200,0.20) 0%, rgba(0,40,100,0.08) 45%, rgba(0,0,0,0) 70%);
+    pointer-events: none;
+  }
+  #bg-glow-br {
+    position: absolute; bottom: -10%; right: 0%;
+    width: 40%; height: 40%;
+    background: radial-gradient(ellipse at center,
+      rgba(0,50,80,0.10) 0%, rgba(0,0,0,0) 60%);
+    pointer-events: none;
+  }
+
+  /* ── Lower third ── */
+  #lower-wrap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 68px; display: flex; align-items: center; padding: 0 60px;
+  }
+  #lower-line {
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #f5a623, rgba(245,166,35,0.25), rgba(245,166,35,0));
+  }
+  #lower-name { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.05em; }
+  #lower-creds {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 13px; color: #6a7d92; margin-left: 22px; letter-spacing: 0.04em;
+  }
+
+  /* ── S1: HOOK / DATA ── */
+  .mono-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 22px; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: #4a5a6e; margin-bottom: 22px;
+  }
+  #s1-line1 { font-size: 86px; font-weight: 900; color: #6e7d91; text-transform: uppercase; line-height: 1; }
+  #s1-line2 { font-size: 86px; font-weight: 900; color: #6e7d91; text-transform: uppercase; line-height: 1; }
+  #s1-line3 { font-size: 140px; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; margin-top: 10px; }
+
+  /* ── S1b: GAP ── */
+  #s1b-line1 { font-size: 88px; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; }
+  #s1b-line2 { font-size: 130px; font-weight: 900; color: #f5a623; text-transform: uppercase; line-height: 1; margin-top: 8px; }
+
+  /* ── S2a: BRIDGE ── */
+  #s2a-question {
+    font-size: 58px; font-weight: 300;
+    color: #8a9aaa; max-width: 1100px; line-height: 1.35;
+  }
+  #s2a-question strong { color: #00d4ff; font-weight: 700; }
+
+  /* ── S2b/c/d: THREE Ps ── */
+  .p-sup {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 22px; font-weight: 500;
+    letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .p-h1 { font-size: 110px; font-weight: 900; text-transform: uppercase; line-height: 0.95; }
+  .p-h2 { font-size: 110px; font-weight: 900; text-transform: uppercase; line-height: 0.95; }
+  .p-h3 { font-size: 90px; font-weight: 900; text-transform: uppercase; line-height: 0.95; }
+
+  /* ── S3: SLAM ── */
+  .slam-word {
+    font-size: 220px; font-weight: 900;
+    text-transform: uppercase; line-height: 0.88; text-align: center;
+  }
+
+  /* ── S4: CTA / PLAYBOOK ── */
+  #s4-line1 { font-size: 76px; font-weight: 900; color: #6e7d91; text-transform: uppercase; line-height: 1; }
+  #s4-line2 { font-size: 110px; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; margin-top: 12px; }
+  #s4-line3 { font-size: 52px; font-weight: 300; color: #8a9aaa; margin-top: 28px; max-width: 1100px; line-height: 1.4; }
+  #s4-program {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 26px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: #f5a623; margin-top: 36px;
+    border: 2px solid rgba(245,166,35,0.4);
+    padding: 14px 48px;
+  }
+</style>
+</head>
+<body>
+
+<div
+  data-composition-id="practical-ai-middle"
+  data-start="0"
+  data-width="1920"
+  data-height="1080"
+  data-fps="30"
+  data-duration="60"
+>
+
+  <!-- PERSISTENT: Background -->
+  <div class="clip" data-start="0" data-duration="60" data-track-index="0" id="bg">
+    <div id="bg-glow"></div>
+    <div id="bg-glow-br"></div>
+  </div>
+
+  <!-- PERSISTENT: Lower third -->
+  <div class="clip" data-start="0" data-duration="60" data-track-index="9">
+    <div id="lower-wrap">
+      <div id="lower-line"></div>
+      <span id="lower-name">Scott Magnacca</span>
+      <span id="lower-creds">Harvard ALM · Babson MBA · 4,127+ Sales Pros Trained</span>
+    </div>
+  </div>
+
+  <!-- ── S1: HOOK / DATA (0–12s) ── -->
+  <!-- narration: "Here's what the research shows. Companies using AI… more in a single day than competitors in a whole week." -->
+  <div class="clip scene" data-start="0" data-duration="12" data-track-index="1" id="s1">
+    <div class="mono-label" id="s1-label">The research is in</div>
+    <div id="s1-line1">AI TEAMS: ONE DAY.</div>
+    <div id="s1-line2">COMPETITORS:</div>
+    <div id="s1-line3">A WHOLE WEEK.</div>
+  </div>
+
+  <!-- ── S1b: GAP IS GROWING (12–18s) ── -->
+  <!-- narration: "The gap is growing every single day." -->
+  <div class="clip scene" data-start="12" data-duration="6" data-track-index="1" id="s1b">
+    <div id="s1b-line1">THE GAP IS GROWING</div>
+    <div id="s1b-line2">EVERY. SINGLE. DAY.</div>
+  </div>
+
+  <!-- ── S2a: BRIDGE QUESTION (18–22s) ── -->
+  <!-- narration: "So what does Practical AI actually give you?" -->
+  <div class="clip scene" data-start="18" data-duration="4" data-track-index="1" id="s2a">
+    <div id="s2a-question">So what does <strong>Practical AI</strong> actually give you?</div>
+  </div>
+
+  <!-- ── S2b: PERFORMANCE (22–27s) ── -->
+  <!-- narration: "Performance. You do in minutes what used to take hours." -->
+  <div class="clip scene" data-start="22" data-duration="5" data-track-index="1" id="s2b">
+    <div class="p-sup" id="s2b-sup" style="color:#00d4ff;">Performance</div>
+    <div class="p-h1" id="s2b-h1" style="color:#00d4ff;">MINUTES,</div>
+    <div class="p-h2" id="s2b-h2" style="color:#fff;">NOT HOURS.</div>
+  </div>
+
+  <!-- ── S2c: PRODUCTIVITY (27–31s) ── -->
+  <!-- narration: "Productivity — you scale your results without burning out." -->
+  <div class="clip scene" data-start="27" data-duration="4" data-track-index="1" id="s2c">
+    <div class="p-sup" id="s2c-sup" style="color:#8a9aaa;">Productivity</div>
+    <div class="p-h1" id="s2c-h1" style="color:#fff;">SCALE YOUR</div>
+    <div class="p-h2" id="s2c-h2" style="color:#00d4ff;">RESULTS.</div>
+  </div>
+
+  <!-- ── S2d: PROFITS (31–39s) ── -->
+  <!-- narration: "And profits — speed, precision, smarter decisions win business." -->
+  <div class="clip scene" data-start="31" data-duration="8" data-track-index="1" id="s2d">
+    <div class="p-sup" id="s2d-sup" style="color:#f5a623;">Profits</div>
+    <div class="p-h1" id="s2d-h1" style="color:#f5a623;">SPEED.</div>
+    <div class="p-h2" id="s2d-h2" style="color:#f5a623;">PRECISION.</div>
+    <div class="p-h3" id="s2d-h3" style="color:#fff;">SMARTER WINS.</div>
+  </div>
+
+  <!-- ── S3: SLAM — DAYS NOT DECADES (39–42s) ── -->
+  <!-- narration: "Days, not decades." -->
+  <div class="clip scene" data-start="39" data-duration="3" data-track-index="1" id="s3">
+    <div id="slam-days" class="slam-word" style="color:#f5a623;">DAYS.</div>
+    <div id="slam-not"  class="slam-word" style="color:#ffffff;">NOT.</div>
+    <div id="slam-dec"  class="slam-word" style="color:#f5a623;">DECADES.</div>
+  </div>
+
+  <!-- ── S4: PLAYBOOK / CTA (42–60s) ── -->
+  <!-- narration: "You don't need a degree. You need a playbook. That's exactly what we've built…" -->
+  <div class="clip scene" data-start="42" data-duration="18" data-track-index="1" id="s4">
+    <div id="s4-line1">YOU DON'T NEED A DEGREE.</div>
+    <div id="s4-line2">YOU NEED A PLAYBOOK.</div>
+    <div id="s4-line3">That's exactly what we've built.</div>
+    <div id="s4-program">PRACTICAL AI SKILLS PROGRAM</div>
+  </div>
+
+  <!-- AUDIO: narration -->
+  <audio id="narration-audio" class="clip"
+    data-start="0" data-duration="60" data-track-index="10"
+    src="assets/practical-ai-narration.mp3" data-volume="0.9"></audio>
+
+  <!-- AUDIO: background music (very subtle) -->
+  <audio id="bg-music" class="clip"
+    data-start="0" data-duration="60" data-track-index="8"
+    src="assets/background-music.mp3" data-volume="0.03"></audio>
+
+</div><!-- end root -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// ─── S1: HOOK / DATA (0–12s) ─────────────────────────────────
+// narration beats: 1.0s label, 3.7s "companies", 11.5s line ends
+tl.from("#s1-label", {
+  opacity: 0, y: -20, duration: 0.4, ease: "power3.out"
+}, 0.8);
+tl.from("#s1-line1", {
+  opacity: 0, y: -70, duration: 0.45, ease: "power4.out"
+}, 3.5);
+tl.from("#s1-line2", {
+  opacity: 0, y: -70, duration: 0.45, ease: "power4.out"
+}, 5.2);
+tl.from("#s1-line3", {
+  opacity: 0, scaleX: 1.12, scaleY: 0.65, duration: 0.55,
+  ease: "back.out(1.7)", transformOrigin: "center center"
+}, 7.2);
+
+// ─── S1b: GAP IS GROWING (12–18s) ────────────────────────────
+// narration: "The gap is growing every single day." at 12.74s
+tl.from("#s1b-line1", {
+  opacity: 0, y: -60, duration: 0.42, ease: "power4.out"
+}, 12.6);
+tl.from("#s1b-line2", {
+  opacity: 0, scaleX: 1.12, scaleY: 0.65, duration: 0.5,
+  ease: "back.out(1.8)", transformOrigin: "center center"
+}, 14.4);
+// Gold pulse — 3.2s window: 0.45 × 4 plays = 1.8s fits in 14.4–18s
+tl.to("#s1b-line2", {
+  textShadow: "0 0 60px rgba(245,166,35,0.85), 0 0 120px rgba(245,166,35,0.35)",
+  duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 3
+}, 14.9);
+
+// ─── S2a: BRIDGE QUESTION (18–22s) ───────────────────────────
+// narration: "So what does practical AI actually give you?" at 18.08s
+tl.from("#s2a-question", {
+  opacity: 0, y: 25, duration: 0.5, ease: "expo.out"
+}, 18.05);
+
+// ─── S2b: PERFORMANCE (22–27s) ───────────────────────────────
+// narration: "Performance. You do in minutes what used to take hours." at 22.34s
+tl.from("#s2b-sup", {
+  opacity: 0, y: -18, duration: 0.3, ease: "expo.out"
+}, 22.2);
+tl.from("#s2b-h1", {
+  opacity: 0, x: -90, duration: 0.42, ease: "back.out(1.4)"
+}, 22.6);
+tl.from("#s2b-h2", {
+  opacity: 0, x: -90, duration: 0.42, ease: "back.out(1.4)"
+}, 23.2);
+// Cyan pulse — 3.7s window: 0.55 × 4 plays = 2.2s
+tl.to("#s2b-h1", {
+  textShadow: "0 0 50px rgba(0,212,255,0.75), 0 0 100px rgba(0,212,255,0.3)",
+  duration: 0.55, ease: "sine.inOut", yoyo: true, repeat: 3
+}, 23.5);
+
+// ─── S2c: PRODUCTIVITY (27–31s) ──────────────────────────────
+// narration: "Productivity — you scale your results without burning out." at 27.14s
+tl.from("#s2c-sup", {
+  opacity: 0, y: -18, duration: 0.3, ease: "expo.out"
+}, 27.0);
+tl.from("#s2c-h1", {
+  opacity: 0, x: -90, duration: 0.42, ease: "back.out(1.4)"
+}, 27.4);
+tl.from("#s2c-h2", {
+  opacity: 0, x: -90, duration: 0.42, ease: "back.out(1.4)"
+}, 28.0);
+// Cyan pulse — 2.7s window: 0.5 × 4 plays = 2.0s
+tl.to("#s2c-h2", {
+  textShadow: "0 0 50px rgba(0,212,255,0.75), 0 0 100px rgba(0,212,255,0.3)",
+  duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3
+}, 28.3);
+
+// ─── S2d: PROFITS (31–39s) ───────────────────────────────────
+// narration: "And profits — speed, precision, smarter decisions win business." at 31.26s
+tl.from("#s2d-sup", {
+  opacity: 0, y: -18, duration: 0.3, ease: "expo.out"
+}, 31.0);
+tl.from("#s2d-h1", {
+  opacity: 0, y: -80, duration: 0.38, ease: "power4.out"
+}, 31.7);
+tl.from("#s2d-h2", {
+  opacity: 0, y: -80, duration: 0.38, ease: "power4.out"
+}, 32.6);
+tl.from("#s2d-h3", {
+  opacity: 0, scaleX: 1.1, duration: 0.45, ease: "back.out(1.6)"
+}, 33.6);
+// Gold pulse — 4.8s window: 0.6 × 5 plays = 3.0s
+tl.to("#s2d-h1, #s2d-h2", {
+  textShadow: "0 0 60px rgba(245,166,35,0.85), 0 0 120px rgba(245,166,35,0.4)",
+  duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 4
+}, 34.2);
+
+// ─── S3: DAYS NOT DECADES (39–42s) ───────────────────────────
+// narration: "Days, not decades." at 39.32s
+tl.from("#slam-days", {
+  opacity: 0, y: -130, duration: 0.32, ease: "power4.out"
+}, 39.4);
+tl.from("#slam-not", {
+  opacity: 0, y: -130, duration: 0.32, ease: "power4.out"
+}, 39.95);
+tl.from("#slam-dec", {
+  opacity: 0, y: -130, duration: 0.32, ease: "power4.out"
+}, 40.5);
+// Quick impact pulse — 1.4s window: 0.4 × 2 plays = 0.8s
+tl.to("#slam-days, #slam-dec", {
+  textShadow: "0 0 80px rgba(245,166,35,0.95), 0 0 160px rgba(245,166,35,0.45)",
+  duration: 0.4, ease: "sine.inOut", yoyo: true, repeat: 1
+}, 40.8);
+
+// ─── S4: PLAYBOOK / CTA (42–60s) ─────────────────────────────
+// narration: "You don't need a degree" 42.14s → "need a playbook" 45.78s → "exactly what we built" 47.16s → program 49.3s
+tl.from("#s4-line1", {
+  opacity: 0, y: -55, duration: 0.45, ease: "power4.out"
+}, 42.1);
+tl.from("#s4-line2", {
+  opacity: 0, scaleX: 1.10, scaleY: 0.68, duration: 0.5,
+  ease: "back.out(1.7)", transformOrigin: "center center"
+}, 45.6);
+tl.from("#s4-line3", {
+  opacity: 0, y: 22, duration: 0.42, ease: "expo.out"
+}, 47.1);
+tl.from("#s4-program", {
+  opacity: 0, scaleX: 0.82, duration: 0.5, ease: "back.out(1.5)"
+}, 49.2);
+// Gold border glow on program badge — 9s window: 0.85 × 10 plays = 8.5s
+tl.to("#s4-program", {
+  boxShadow: "0 0 30px rgba(245,166,35,0.65), 0 0 60px rgba(245,166,35,0.25)",
+  borderColor: "rgba(245,166,35,0.9)",
+  duration: 0.85, ease: "sine.inOut", yoyo: true, repeat: 9
+}, 49.6);
+
+// Fade to black
+tl.to("[data-composition-id]", {
+  opacity: 0, duration: 1.2, ease: "power2.in"
+}, 58.5);
+
+// ─── DURATION ANCHOR (mandatory) ─────────────────────────────
+tl.to({}, { duration: 60 }, 0);
+
+window.__timelines["practical-ai-middle"] = tl;
+</script>
+</body>
+</html>
