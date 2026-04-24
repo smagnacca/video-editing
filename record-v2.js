@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const OUTPUT_DIR = '/tmp/video-v2';
 const HTML_PATH = 'file:///tmp/composition-v2.html';
-const DURATION_MS = 193 * 1000; // 193s — covers full 192s animation + 1s buffer
+const DURATION_MS = 224 * 1000; // 224s — covers S8 (190→223s) + 1s buffer
 
 async function record() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
