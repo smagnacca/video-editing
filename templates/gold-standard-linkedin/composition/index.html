@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  width: 1920px; height: 1080px;
+  overflow: hidden;
+  background: #0a0e1a;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #fff;
+}
+
+/* ── SECTION BASE ── */
+.sec {
+  position: absolute;
+  width: 1920px; height: 1080px;
+  opacity: 0;
+  pointer-events: none;
+}
+.sec.on { opacity: 1; }
+
+/* ── BACKGROUNDS ── */
+.bg {
+  position: absolute; inset: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #0a0e1a;
+  transform-origin: center center;
+}
+.bg.zoom-slow { animation: kenBurns 60s linear infinite; }
+.bg.zoom-right { animation: kenBurnsRight 30s linear forwards; }
+.bg.zoom-left  { animation: kenBurnsLeft  30s linear forwards; }
+
+@keyframes kenBurns {
+  0%   { transform: scale(1.05) translateX(0); }
+  50%  { transform: scale(1.10) translateX(-20px); }
+  100% { transform: scale(1.05) translateX(0); }
+}
+@keyframes kenBurnsRight {
+  0%   { transform: scale(1.0) translateX(0); }
+  100% { transform: scale(1.08) translateX(-30px); }
+}
+@keyframes kenBurnsLeft {
+  0%   { transform: scale(1.08) translateX(-30px); }
+  100% { transform: scale(1.0) translateX(0); }
+}
+
+/* ── PRIVACY OVERLAY (Morris blur) ── */
+.priv-face {
+  position: absolute;
+  border-radius: 50%;
+  backdrop-filter: blur(28px) saturate(0.3);
+  -webkit-backdrop-filter: blur(28px) saturate(0.3);
+  background: rgba(10,14,26,0.45);
+  z-index: 50;
+}
+.priv-name {
+  position: absolute;
+  border-radius: 6px;
+  backdrop-filter: blur(24px) saturate(0.2);
+  -webkit-backdrop-filter: blur(24px) saturate(0.2);
+  background: rgba(10,14,26,0.5);
+  z-index: 50;
+}
+.priv-bar {
+  position: absolute;
+  backdrop-filter: blur(22px) saturate(0.2);
+  -webkit-backdrop-filter: blur(22px) saturate(0.2);
+  background: rgba(10,14,26,0.6);
+  z-index: 50;
+}
+
+/* ── DARK GRADIENT OVERLAYS ── */
+.overlay-dark {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(10,14,26,0.55) 0%, rgba(10,14,26,0.75) 100%);
+  z-index: 5;
+}
+.overlay-full {
+  position: absolute; inset: 0;
+  background: rgba(10,14,26,0.92);
+  z-index: 5;
+}
+
+/* ── GOLD / CYAN ACCENTS ── */
+.gold { color: #f5a623; }
+.cyan { color: #00d4ff; }
+.gold-bg { background: #f5a623; }
+.gold-border { border: 3px solid #f5a623; }
+.gold-line {
+  display: block; height: 4px;
+  background: linear-gradient(90deg, #f5a623, #00d4ff);
+  border-radius: 2px;
+}
+
+/* ── SECTION LABEL TAG ── */
+.section-tag {
+  position: absolute;
+  top: 52px; left: 80px;
+  display: flex; align-items: center; gap: 16px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.section-tag.on { opacity: 1; }
+.section-tag .pill {
+  background: #f5a623;
+  color: #0a0e1a;
+  font-size: 22px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 8px 24px; border-radius: 40px;
+}
+.section-tag .label {
+  font-size: 24px; font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.04em;
+}
+
+/* ── WATERMARK ── */
+.watermark {
+  position: absolute;
+  bottom: 38px; right: 60px;
+  font-size: 22px; font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.06em;
+  z-index: 30;
+}
+
+/* ── CTA BAR ── */
+.cta-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70px;
+  background: linear-gradient(90deg, #f5a623 0%, #e8950f 100%);
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  z-index: 90;
+  opacity: 0;
+  transform: translateY(70px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.cta-bar.on { opacity: 1; transform: translateY(0); }
+.cta-bar span {
+  font-size: 26px; font-weight: 800;
+  color: #0a0e1a; letter-spacing: 0.04em;
+}
+.cta-bar .arrow {
+  font-size: 30px; font-weight: 900; color: #0a0e1a;
+}
+
+/* ═══════════════════════════════════
+   SECTION 1 — HOOK / TITLE CARD
+═══════════════════════════════════ */
+#s-hook {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  background: #0a0e1a;
+  z-index: 10;
+}
+.hook-stat {
+  font-size: 180px; font-weight: 900;
+  color: #f5a623;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 40px rgba(245,166,35,0.65), 0 0 80px rgba(245,166,35,0.3);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.4s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.hook-stat.on { opacity: 1; transform: scale(1); }
+.hook-sub {
+  font-size: 48px; font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s 0.2s, transform 0.5s 0.2s;
+}
+.hook-sub.on { opacity: 1; transform: translateY(0); }
+.hook-q {
+  font-size: 56px; font-weight: 800;
+  color: #ffffff;
+  margin-top: 28px; text-align: center;
+  max-width: 1100px; line-height: 1.2;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s 0.4s, transform 0.5s 0.4s;
+}
+.hook-q.on { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════
+   SECTION 2 — PROFILE BG + CALLOUTS
+═══════════════════════════════════ */
+#s-profile { z-index: 8; }
+
+.callout {
+  position: absolute;
+  background: rgba(245,166,35,0.15);
+  border: 2.5px solid #f5a623;
+  border-radius: 8px;
+  box-shadow: 0 0 18px rgba(245,166,35,0.25);
+  z-index: 20;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.callout.on { opacity: 1; transform: scale(1); }
+
+.callout-label {
+  position: absolute;
+  background: #f5a623;
+  color: #0a0e1a;
+  font-size: 20px; font-weight: 800;
+  padding: 6px 18px; border-radius: 4px;
+  white-space: nowrap;
+  z-index: 21;
+}
+
+/* ─ Headline callout ─ */
+#co-headline { left: 158px; top: 438px; width: 720px; height: 68px; }
+#co-headline .callout-label { top: -32px; left: 0; }
+
+/* ─ About callout ─ */
+#co-about { left: 158px; top: 520px; width: 580px; height: 55px; }
+#co-about .callout-label { top: -32px; left: 0; }
+
+/* ─ Experience callout ─ */
+#co-exp { left: 158px; top: 590px; width: 480px; height: 55px; }
+#co-exp .callout-label { top: -32px; left: 0; }
+
+/* ─ Skills callout ─ */
+#co-skills { left: 158px; top: 658px; width: 380px; height: 45px; }
+#co-skills .callout-label { top: -32px; left: 0; }
+
+/* ─ "Copy All" final highlight ─ */
+#co-all { left: 140px; top: 380px; width: 1100px; height: 360px;
+  border-color: #00d4ff; background: rgba(0,212,255,0.06); }
+#co-all .callout-label { background: #00d4ff; top: -34px; left: 0; font-size: 22px; }
+
+/* ═══════════════════════════════════
+   SECTION 3 — PROMPT S1 (Self-Audit)
+═══════════════════════════════════ */
+#s-prompt1 {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 40px;
+  background: #0a0e1a; z-index: 15;
+}
+.prompt-label {
+  font-size: 26px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: #00d4ff;
+  opacity: 0; transition: opacity 0.5s;
+}
+.prompt-label.on { opacity: 1; }
+.prompt-box {
+  max-width: 1300px;
+  border: 2px solid rgba(245,166,35,0.4);
+  border-radius: 16px;
+  padding: 50px 60px;
+  background: rgba(255,255,255,0.03);
+  position: relative;
+}
+.prompt-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #f5a623, #00d4ff, #f5a623);
+  border-radius: 16px 16px 0 0;
+}
+.prompt-text {
+  font-size: 42px; font-weight: 500;
+  line-height: 1.5; color: #ffffff;
+  min-height: 200px;
+}
+.prompt-cursor {
+  display: inline-block;
+  width: 3px; height: 44px;
+  background: #f5a623;
+  margin-left: 4px;
+  vertical-align: bottom;
+  animation: blink 0.7s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ═══════════════════════════════════
+   SECTION 4 — SCORE TABLE
+═══════════════════════════════════ */
+#s-scores {
+  display: flex; align-items: center; justify-content: center;
+  gap: 80px; background: #0a0e1a; z-index: 15;
+  padding: 0 80px;
+}
+.scores-left { flex: 0 0 auto; }
+.scores-left h2 {
+  font-size: 56px; font-weight: 900;
+  line-height: 1.1; margin-bottom: 12px;
+}
+.scores-left p {
+  font-size: 28px; color: rgba(255,255,255,0.6);
+  max-width: 480px; line-height: 1.4;
+}
+.score-table { width: 860px; border-collapse: collapse; }
+.score-table thead tr th {
+  font-size: 20px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  padding: 0 0 16px;
+  text-align: left;
+}
+.score-table thead tr th:nth-child(2) { text-align: center; width: 110px; }
+.score-row {
+  opacity: 0; transform: translateX(30px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.score-row.on { opacity: 1; transform: translateX(0); }
+.score-row td {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 26px;
+}
+.score-row td:first-child { font-weight: 700; color: #ffffff; }
+.score-row td:nth-child(2) {
+  text-align: center;
+  font-size: 32px; font-weight: 900;
+}
+.score-row td:last-child {
+  font-size: 22px; color: rgba(255,255,255,0.55);
+  padding-left: 24px;
+}
+.score-row.highlight td:first-child { color: #f5a623; }
+.score-row.highlight td:nth-child(2) { color: #f5a623; }
+.score-row.highlight { background: rgba(245,166,35,0.06); border-radius: 8px; }
+.score-low  td:nth-child(2) { color: #ff6b6b; }
+.score-high td:nth-child(2) { color: #00d4ff; }
+.score-top  td:nth-child(2) { color: #4dff91; }
+
+.headshot-callout {
+  margin-top: 24px;
+  padding: 20px 28px;
+  background: rgba(245,166,35,0.1);
+  border: 2px solid #f5a623;
+  border-radius: 12px;
+  display: flex; align-items: center; gap: 20px;
+  opacity: 0; transform: translateY(15px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.headshot-callout.on { opacity: 1; transform: translateY(0); }
+.headshot-callout .hs-label {
+  font-size: 22px; font-weight: 700; color: #f5a623;
+}
+.headshot-callout .hs-tool {
+  font-size: 30px; font-weight: 900; color: #ffffff;
+}
+.headshot-callout .hs-result {
+  font-size: 24px; font-weight: 600;
+  color: rgba(255,255,255,0.7); margin-left: auto;
+}
+.two-x-stat {
+  font-size: 80px; font-weight: 900; color: #f5a623;
+  text-shadow: 0 0 25px rgba(245,166,35,0.6);
+  margin-left: 16px;
+  opacity: 0; transform: scale(0.6);
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.two-x-stat.on { opacity: 1; transform: scale(1); }
+
+/* ═══════════════════════════════════
+   SECTION 5 — SECTION BREAK
+═══════════════════════════════════ */
+.sec-break {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+  background: #0a0e1a;
+  z-index: 15;
+}
+.break-num {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #00d4ff;
+  opacity: 0; transition: opacity 0.5s;
+}
+.break-num.on { opacity: 1; }
+.break-title {
+  font-size: 96px; font-weight: 900;
+  line-height: 0.95; text-align: center;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.5s 0.15s, transform 0.5s 0.15s;
+}
+.break-title.on { opacity: 1; transform: translateY(0); }
+.break-sub {
+  font-size: 36px; font-weight: 500;
+  color: rgba(255,255,255,0.55); text-align: center;
+  max-width: 900px; line-height: 1.4;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.break-sub.on { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════
+   SECTION 6 — MORRIS PROFILE (BLURRED)
+═══════════════════════════════════ */
+#s-morris { z-index: 8; }
+
+.text-slam {
+  position: absolute;
+  left: 80px; bottom: 130px;
+  max-width: 860px;
+  z-index: 20;
+}
+.slam-line {
+  font-size: 68px; font-weight: 900;
+  line-height: 1.0; display: block;
+  opacity: 0; transform: translateX(-40px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.slam-line.on { opacity: 1; transform: translateX(0); }
+
+/* ═══════════════════════════════════
+   SECTION 7 — UNFAIR ADVANTAGE
+═══════════════════════════════════ */
+#s-advantage {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 32px;
+  background: #0a0e1a; z-index: 15;
+}
+.adv-pre {
+  font-size: 30px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #00d4ff;
+  opacity: 0; transition: opacity 0.5s;
+}
+.adv-pre.on { opacity: 1; }
+.adv-title {
+  font-size: 112px; font-weight: 900;
+  text-align: center; line-height: 0.9;
+  opacity: 0; transform: scale(0.85);
+  transition: opacity 0.5s 0.1s, transform 0.6s 0.1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.adv-title.on { opacity: 1; transform: scale(1); }
+.adv-sub {
+  font-size: 40px; font-weight: 600;
+  color: rgba(255,255,255,0.55); text-align: center;
+  max-width: 1000px; line-height: 1.4;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.adv-sub.on { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════
+   SECTION 8 — PROMPT S3 (Intel Brief)
+═══════════════════════════════════ */
+#s-prompt3 {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 36px;
+  background: #0a0e1a; z-index: 15;
+  padding: 60px 140px;
+}
+.prompt3-pre {
+  font-size: 26px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #f5a623; align-self: flex-start;
+  opacity: 0; transition: opacity 0.5s;
+}
+.prompt3-pre.on { opacity: 1; }
+.prompt3-box {
+  width: 100%;
+  border: 2px solid rgba(0,212,255,0.4);
+  border-radius: 16px;
+  padding: 48px 56px;
+  background: rgba(255,255,255,0.025);
+  position: relative;
+}
+.prompt3-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #00d4ff, #f5a623, #00d4ff);
+  border-radius: 16px 16px 0 0;
+}
+.prompt3-text {
+  font-size: 36px; font-weight: 400;
+  line-height: 1.6; color: #ffffff;
+  min-height: 280px;
+}
+
+/* ═══════════════════════════════════
+   SECTION 9 — CALCULATING
+═══════════════════════════════════ */
+#s-calc {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 48px;
+  background: #0a0e1a; z-index: 15;
+}
+.calc-icon {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  border: 6px solid rgba(0,212,255,0.2);
+  border-top-color: #00d4ff;
+  animation: spin 1s linear infinite;
+  position: relative;
+  opacity: 0; transition: opacity 0.4s;
+}
+.calc-icon.on { opacity: 1; }
+.calc-icon::after {
+  content: '';
+  position: absolute; inset: 12px;
+  border-radius: 50%;
+  border: 4px solid rgba(245,166,35,0.2);
+  border-bottom-color: #f5a623;
+  animation: spin 0.7s linear infinite reverse;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.calc-label {
+  font-size: 52px; font-weight: 800;
+  letter-spacing: 0.06em; text-align: center;
+  opacity: 0; transition: opacity 0.4s 0.2s;
+}
+.calc-label.on { opacity: 1; }
+.calc-sub {
+  font-size: 30px; font-weight: 500;
+  color: rgba(255,255,255,0.5); text-align: center;
+  opacity: 0; transition: opacity 0.4s 0.4s;
+}
+.calc-sub.on { opacity: 1; }
+.calc-dots {
+  display: flex; gap: 16px; margin-top: -20px;
+  opacity: 0; transition: opacity 0.4s 0.5s;
+}
+.calc-dots.on { opacity: 1; }
+.calc-dot {
+  width: 14px; height: 14px; border-radius: 50%; background: #00d4ff;
+}
+.calc-dot:nth-child(1) { animation: pulse 1.2s 0.0s ease-in-out infinite; }
+.calc-dot:nth-child(2) { animation: pulse 1.2s 0.4s ease-in-out infinite; }
+.calc-dot:nth-child(3) { animation: pulse 1.2s 0.8s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:0.2;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+
+.calc-bar-wrap {
+  width: 700px; height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px; overflow: hidden;
+  opacity: 0; transition: opacity 0.4s 0.6s;
+}
+.calc-bar-wrap.on { opacity: 1; }
+.calc-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00d4ff, #f5a623);
+  border-radius: 4px;
+  animation: fillBar 4.5s linear forwards;
+}
+@keyframes fillBar {
+  0%   { width: 0%; }
+  30%  { width: 35%; }
+  60%  { width: 62%; }
+  80%  { width: 80%; }
+  100% { width: 100%; }
+}
+
+/* ═══════════════════════════════════
+   SECTION 10 — ANALYSIS REVEAL
+═══════════════════════════════════ */
+#s-analysis {
+  display: flex; align-items: flex-start; justify-content: center;
+  flex-direction: column;
+  background: #0a0e1a; z-index: 15;
+  padding: 60px 120px;
+}
+.analysis-header {
+  width: 100%; margin-bottom: 32px;
+  opacity: 0; transform: translateY(-20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.analysis-header.on { opacity: 1; transform: translateY(0); }
+.analysis-title {
+  font-size: 52px; font-weight: 900;
+  color: #f5a623; letter-spacing: 0.04em;
+}
+.analysis-subtitle {
+  font-size: 26px; font-weight: 500;
+  color: rgba(255,255,255,0.5); margin-top: 4px;
+}
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px; width: 100%;
+}
+.analysis-card {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 28px 32px;
+  opacity: 0; transform: translateY(25px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.analysis-card.on { opacity: 1; transform: translateY(0); }
+.analysis-card.highlight-card { border-color: rgba(0,212,255,0.5); box-shadow: 0 0 28px rgba(0,212,255,0.18); }
+.card-heading {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: #f5a623; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-heading svg { flex-shrink: 0; }
+.card-bullets { list-style: none; }
+.card-bullets li {
+  font-size: 20px; font-weight: 500;
+  color: rgba(255,255,255,0.8); line-height: 1.4;
+  padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.card-bullets li::before {
+  content: '';
+  display: block; flex-shrink: 0;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #00d4ff; margin-top: 8px;
+}
+
+.analysis-msg {
+  margin-top: 24px; width: 100%;
+  padding: 24px 32px;
+  background: rgba(0,212,255,0.08);
+  border: 1.5px solid rgba(0,212,255,0.4);
+  border-radius: 14px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.analysis-msg.on { opacity: 1; transform: translateY(0); }
+.msg-label {
+  font-size: 19px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #00d4ff; margin-bottom: 8px;
+}
+.msg-text {
+  font-size: 23px; font-weight: 500;
+  color: rgba(255,255,255,0.85); line-height: 1.5;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════
+   SECTION 11 — FINAL PUNCH
+═══════════════════════════════════ */
+#s-final {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 28px;
+  background: #0a0e1a; z-index: 15;
+}
+.final-line1 {
+  font-size: 96px; font-weight: 900;
+  text-align: center; line-height: 0.95;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.final-line1.on { opacity: 1; transform: translateY(0); }
+.final-line2 {
+  font-size: 48px; font-weight: 700;
+  color: rgba(255,255,255,0.6); text-align: center;
+  max-width: 1100px; line-height: 1.3;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s 0.2s, transform 0.5s 0.2s;
+}
+.final-line2.on { opacity: 1; transform: translateY(0); }
+.final-cta-wrap {
+  margin-top: 20px;
+  display: flex; align-items: center; gap: 30px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s 0.4s, transform 0.5s 0.4s;
+}
+.final-cta-wrap.on { opacity: 1; transform: translateY(0); }
+.final-pill {
+  padding: 18px 48px;
+  background: #f5a623;
+  color: #0a0e1a;
+  font-size: 28px; font-weight: 900;
+  border-radius: 50px;
+  letter-spacing: 0.04em;
+}
+.final-quiz {
+  font-size: 26px; font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+.final-quiz span { color: #00d4ff; }
+
+/* ── transition fade ── */
+.fade-to-black {
+  position: absolute; inset: 0;
+  background: #0a0e1a;
+  z-index: 200;
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.5s;
+}
+.fade-to-black.on { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<!-- ══════ SECTION 1: HOOK ══════ -->
+<div class="sec" id="s-hook">
+  <div class="hook-stat" id="hs-num">1B+</div>
+  <div class="hook-sub" id="hs-sub">LinkedIn Users</div>
+  <div class="hook-q" id="hs-q">Most connections go ignored.<br>Here's how to change that.</div>
+</div>
+
+<!-- ══════ SECTION 2: PROFILE SCAN ══════ -->
+<div class="sec" id="s-profile">
+  <div class="bg zoom-right" style="background-image: url('./assets/L1-01.jpg');"></div>
+  <div class="overlay-dark"></div>
+  <!-- Callout boxes (positioned relative to the scaled screenshot) -->
+  <div class="callout" id="co-headline"><div class="callout-label">HEADLINE</div></div>
+  <div class="callout" id="co-about"><div class="callout-label">ABOUT</div></div>
+  <div class="callout" id="co-exp"><div class="callout-label">EXPERIENCE</div></div>
+  <div class="callout" id="co-skills"><div class="callout-label">SKILLS</div></div>
+  <div class="callout" id="co-all"><div class="callout-label">COPY ALL OF THIS →</div></div>
+  <div class="watermark">salesforlife.ai</div>
+  <!-- Section tag -->
+  <div class="section-tag" id="tag-profile">
+    <span class="pill">SKILL 1</span>
+    <span class="label">Audit Your Own Profile</span>
+  </div>
+</div>
+
+<!-- ══════ SECTION 3: PROMPT S1 ══════ -->
+<div class="sec" id="s-prompt1">
+  <div class="prompt-label" id="pl1">The AI Profile Audit Prompt</div>
+  <div class="prompt-box">
+    <div class="prompt-text" id="pt1"></div>
+  </div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 4: SCORE TABLE ══════ -->
+<div class="sec" id="s-scores">
+  <div class="scores-left">
+    <h2 id="score-h">AI Profile<br><span class="gold">Scorecard</span></h2>
+    <p style="margin-top:16px;">Every section rated.<br>Every gap flagged.<br>Priority list ready.</p>
+    <div class="headshot-callout" id="hs-callout">
+      <div>
+        <div class="hs-label">Photo flagged →</div>
+        <div class="hs-tool">HeadshotPro</div>
+      </div>
+      <div class="hs-result">Result:</div>
+      <div class="two-x-stat" id="two-x">2×<br><span style="font-size:28px;color:#fff">Profile Views</span></div>
+    </div>
+  </div>
+  <table class="score-table">
+    <thead><tr>
+      <th>Area</th><th>Score</th><th>Top Fix</th>
+    </tr></thead>
+    <tbody>
+      <tr class="score-row score-low" id="sr-photo">
+        <td>Photo</td><td>7</td><td>Upgrade image, softer background</td>
+      </tr>
+      <tr class="score-row score-high" id="sr-about">
+        <td>About</td><td>8</td><td>Break into sections, add key skills</td>
+      </tr>
+      <tr class="score-row score-low" id="sr-activity">
+        <td>Activity</td><td>6.5</td><td>Increase posting, engage influencers</td>
+      </tr>
+      <tr class="score-row score-top" id="sr-exp">
+        <td>Experience</td><td>9</td><td>Trim redundancy, action-first language</td>
+      </tr>
+      <tr class="score-row score-top" id="sr-edu">
+        <td>Education</td><td>9.5</td><td>Add 1–2 line descriptions</td>
+      </tr>
+      <tr class="score-row score-low" id="sr-cert">
+        <td>Certifications</td><td>7</td><td>Add AI-relevant certifications</td>
+      </tr>
+      <tr class="score-row score-low highlight" id="sr-photo2">
+        <td><svg style="vertical-align:middle;margin-right:8px" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Photo (Priority)</td><td>7</td><td>Run through HeadshotPro now</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 5A: BREAK — SKILL 2 ══════ -->
+<div class="sec sec-break" id="s-break2">
+  <div class="break-num" id="bn2">Skill 2 of 3</div>
+  <div class="break-title" id="bt2">Find Your<br><span class="gold">Target</span></div>
+  <div class="break-sub" id="bs2">Stop spraying. Start choosing.<br>Research first — then connect.</div>
+  <span class="gold-line" style="width:320px;margin-top:8px;"></span>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 6: MORRIS PROFILE ══════ -->
+<div class="sec" id="s-morris">
+  <div class="bg zoom-left" id="bg-morris" style="background-image: url('./assets/Morris-03.jpg');"></div>
+  <div class="overlay-dark"></div>
+  <!-- Privacy overlays
+       Image is 1680×820 displayed contain in 1920×1080 → scale=1.143, vOffset=71.5px
+       Sticky header in original image: y=80-136px → composition: y=163-227px
+  -->
+  <!-- Browser chrome bar (URL may show name) -->
+  <div class="priv-bar" style="left:0; top:0; right:0; height:75px;"></div>
+  <!-- LinkedIn sticky header row: contains avatar + "Morris Porter" name + headline -->
+  <div class="priv-bar" style="left:0; top:157px; right:0; height:80px;"></div>
+  <!-- Avatar circle within sticky header -->
+  <div class="priv-face" style="left:128px; top:160px; width:68px; height:68px;"></div>
+
+  <div class="text-slam">
+    <span class="slam-line" id="sl1">Find someone</span>
+    <span class="slam-line" id="sl2">you want to <span class="gold">know.</span></span>
+    <span class="slam-line" id="sl3" style="color:#00d4ff;">Scan everything.</span>
+    <span class="slam-line" id="sl4">This is your <span class="gold">homework.</span></span>
+  </div>
+  <div class="section-tag on" id="tag-morris">
+    <span class="pill">SKILL 2</span>
+    <span class="label">Research Their Profile</span>
+  </div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 5B: BREAK — SKILL 3 ══════ -->
+<div class="sec sec-break" id="s-break3">
+  <div class="break-num" id="bn3">Skill 3 of 3</div>
+  <div class="break-title" id="bt3">Your Unfair<br><span class="gold">Advantage</span></div>
+  <div class="break-sub" id="bs3">The intelligence briefing.<br>Know exactly what to say — before you say it.</div>
+  <span class="gold-line" style="width:320px;margin-top:8px;"></span>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 7: ADVANTAGE SETUP ══════ -->
+<div class="sec" id="s-advantage">
+  <div class="adv-pre" id="ap">Here's where AI becomes</div>
+  <div class="adv-title" id="at">Your<br><span class="gold">Unfair Advantage</span></div>
+  <div class="adv-sub" id="as">Copy their entire profile → paste one prompt<br>→ get a complete intelligence briefing in seconds.</div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 8: PROMPT S3 ══════ -->
+<div class="sec" id="s-prompt3">
+  <div class="prompt3-pre" id="p3pre">The Intelligence Briefing Prompt</div>
+  <div class="prompt3-box">
+    <div class="prompt3-text" id="pt3"></div>
+  </div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 9: CALCULATING ══════ -->
+<div class="sec" id="s-calc">
+  <div class="calc-icon" id="ci"></div>
+  <div class="calc-label" id="cl">Analyzing Profile<span class="gold">...</span></div>
+  <div class="calc-dots" id="cd">
+    <div class="calc-dot"></div>
+    <div class="calc-dot"></div>
+    <div class="calc-dot"></div>
+  </div>
+  <div class="calc-sub" id="cs">Scanning education · work history · posts · communication style</div>
+  <div class="calc-bar-wrap" id="cbw"><div class="calc-bar"></div></div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 10: ANALYSIS REVEAL ══════ -->
+<div class="sec" id="s-analysis">
+  <div class="analysis-header" id="ah">
+    <div class="analysis-title">Intelligence Briefing — Target Profile</div>
+    <div class="analysis-subtitle">1-Page Connection Analysis &nbsp;·&nbsp; Generated in seconds</div>
+  </div>
+  <div class="analysis-grid">
+    <div class="analysis-card" id="ac1">
+      <div class="card-heading">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Personality & Work Style
+      </div>
+      <ul class="card-bullets">
+        <li>High-growth sales operator — execution first</li>
+        <li>Builds teams, processes, and competitive strategies</li>
+        <li>Values coaching, data, and hard-won insights</li>
+        <li>Mission-driven: helping companies scale</li>
+      </ul>
+    </div>
+    <div class="analysis-card" id="ac2">
+      <div class="card-heading">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Core Professional Interests
+      </div>
+      <ul class="card-bullets">
+        <li>Enterprise sales strategy & team building</li>
+        <li>Go-to-market execution & competitive positioning</li>
+        <li>Sales hiring, hiring excellence, talent development</li>
+        <li>AI applications in sales & business development</li>
+      </ul>
+    </div>
+    <div class="analysis-card" id="ac3">
+      <div class="card-heading">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Key Motivations
+      </div>
+      <ul class="card-bullets">
+        <li>Share hard-earned sales & leadership insights</li>
+        <li>Stay at the frontier of sales technology</li>
+        <li>Build and mentor elite sales organizations</li>
+        <li>Leave a legacy of scalable business growth</li>
+      </ul>
+    </div>
+    <div class="analysis-card highlight-card" id="ac4">
+      <div class="card-heading" style="color:#00d4ff;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <span style="color:#00d4ff;">Best Connection Approach</span>
+      </div>
+      <ul class="card-bullets">
+        <li>Lead with your 21+ mutual Babson connections</li>
+        <li>Reference his Whale Hunting content — he cares</li>
+        <li>Ask for his AI-in-sales take: connects your worlds</li>
+        <li>2–3 sentences max. No pitch. No ask beyond a connect.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="analysis-msg" id="amsg">
+    <div class="msg-label">Suggested Connection Message</div>
+    <div class="msg-text">"Hi [Name] — I noticed we share several Babson connections and your work on sales scaling caught my eye. I teach AI-enabled selling at Babson and would love to connect and share notes sometime."</div>
+  </div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- ══════ SECTION 11: FINAL PUNCH ══════ -->
+<div class="sec" id="s-final">
+  <div class="final-line1" id="fl1">You're Not<br><span class="gold">Guessing</span> Anymore.</div>
+  <div class="final-line2" id="fl2">You know what to say — and exactly why they'll say yes.</div>
+  <div class="final-cta-wrap" id="fcw">
+    <div class="final-pill">Take the Free AI Skills Quiz</div>
+    <div class="final-quiz">practical-ai-skills-iq.netlify.app &nbsp;<span>→</span></div>
+  </div>
+  <div class="watermark">salesforlife.ai</div>
+</div>
+
+<!-- Fade layer -->
+<div class="fade-to-black" id="fade"></div>
+
+<script>
+// ── UTILITY ──
+function show(id)  { document.getElementById(id).classList.add('on'); }
+function hide(id)  { document.getElementById(id).classList.remove('on'); }
+function at(ms, fn){ setTimeout(fn, ms); }
+
+// ── SECTION SWITCHER ──
+let currentSec = null;
+function switchSec(id, fadeMs = 400) {
+  if(currentSec) {
+    const prev = document.getElementById(currentSec);
+    prev.style.transition = `opacity ${fadeMs}ms`;
+    prev.classList.remove('on');
+  }
+  const next = document.getElementById(id);
+  next.style.transition = `opacity ${fadeMs}ms`;
+  setTimeout(() => { next.classList.add('on'); }, currentSec ? fadeMs/2 : 0);
+  currentSec = id;
+}
+
+// ── TYPING ANIMATOR ──
+function typeText(elId, text, startMs, charsPerSec, doneCb) {
+  const el = document.getElementById(elId);
+  const ms = 1000 / charsPerSec;
+  const cursorEl = document.createElement('span');
+  cursorEl.className = 'prompt-cursor';
+  for(let i = 0; i <= text.length; i++) {
+    (function(idx){
+      setTimeout(() => {
+        el.textContent = text.slice(0, idx);
+        el.appendChild(cursorEl);
+        if(idx === text.length && doneCb) doneCb();
+      }, startMs + idx * ms);
+    })(i);
+  }
+}
+
+// ═══════════════════════════
+// MASTER TIMELINE (in ms)
+// All timestamps based on Whisper word-level data
+// ═══════════════════════════
+
+const T = {
+  // SECTION 1 — HOOK (before Scott's voice at 700ms)
+  hookIn:    0,
+  hookStat:  100,
+  hookSub:   400,
+  hookQ:     700,
+
+  // SECTION 2 — PROFILE (Scott says "Here's what I do" at 12.28s)
+  profileIn: 10500,
+  tagProfile: 11000,
+  coHeadline: 14500,  // "my headline" ~17.24s → pre-load slightly
+  coAbout:    18200,  // "my about section" ~18.36s
+  coExp:      19500,  // "my work history" ~19.6s
+  coSkills:   21300,  // "my skills" ~21.4s
+  coAll:      23500,  // "all of it" ~23.6s
+
+  // SECTION 3 — PROMPT S1 (Scott says "dropped it into this prompt" at 24s, pause until 30s)
+  prompt1In:  24000,
+  prompt1Pre: 25000,
+  prompt1Type: 30000, // Scott starts reading at 30.04s
+  // Prompt: ~40 words, Scott reads 30-38.78s = 8.78s → ~40 chars/s? Let's use ~14 chars/sec
+  // Text: "Analyze my LinkedIn profile and give me a one-page assessment of my strengths, weaknesses, and top improvements I should make to attract my ideal connections."
+  // 158 chars, 8.78s → 18 chars/sec
+
+  // SECTION 4 — SCORES (Scott says "within seconds, scored breakdown" at 40.5s)
+  scoresIn:  39500,
+  scoreH:    39600,
+  sr1:       41000,  // ~41s each row stagger
+  sr2:       42000,
+  sr3:       43000,
+  sr4:       44000,
+  sr5:       45000,
+  sr6:       46000,
+  sr7:       47000,  // photo highlight
+  hsCallout: 50500,  // "flagged on my profile, my photo" at 50.5s
+  twoX:      59000,  // "profile views doubled" at 59.14s
+
+  // SECTION 5A — BREAK 2 (61s: "Now let's flip it")
+  break2In:  60500,
+  break2Anim: 61000,
+
+  // SECTION 6 — MORRIS (70.1s: "Find someone")
+  morrisIn:  68000,
+  sl1:       70100,
+  sl2:       70800,
+  sl3:       72800,
+  sl4:       79200,  // "You're not cold calling" at 79.18s
+
+  // SECTION 5B — BREAK 3 (89.7s: "Here's where AI becomes")
+  break3In:  87500,
+  break3Anim: 88000,
+
+  // SECTION 7 — ADVANTAGE (89.7s)
+  advIn:     89700,
+  advPre:    90000,
+  advTitle:  90400,
+  advSub:    91500,
+
+  // SECTION 8 — PROMPT S3 (96s: "paste it into this prompt", typing at 99.22s)
+  prompt3In:  95500,
+  prompt3Pre: 96000,
+  prompt3Type: 99220, // Scott reads at 99.22s - 122.76s = 23.54s
+  // Text: ~279 chars, 23.54s → 11.85 chars/sec
+
+  // SECTION 9 — CALCULATING (122.8s - 127.7s: 4.9s silence)
+  calcIn:   122800,
+  calcAnim:  123200,
+
+  // SECTION 10 — ANALYSIS (127.1s: "What comes back")
+  analysisIn:  127100,
+  ah:          127500,
+  ac1:         128500,  // "communication style" ~130.7s
+  ac2:         130700,
+  ac3:         133700,
+  ac4:         136700,
+  amsg:        139000,
+
+  // SECTION 11 — FINAL (139.8s: "You're not guessing anymore")
+  finalIn:   139700,
+  fl1:       140000,
+  fl2:       142000,
+  fcw:       143000,
+  ctaBar:    143500,
+
+  // FADE OUT (145s)
+  fadeOut:   144800,
+};
+
+// ── TIMELINE ──
+
+// S1 HOOK
+at(T.hookIn,   () => { switchSec('s-hook', 0); });
+at(T.hookStat, () => { show('hs-num'); });
+at(T.hookSub,  () => { show('hs-sub'); });
+at(T.hookQ,    () => { show('hs-q');   });
+
+// S2 PROFILE
+at(T.profileIn,  () => { switchSec('s-profile', 400); });
+at(T.tagProfile, () => { show('tag-profile'); });
+at(T.coHeadline, () => { show('co-headline'); });
+at(T.coAbout,    () => { show('co-about');    });
+at(T.coExp,      () => { show('co-exp');      });
+at(T.coSkills,   () => { show('co-skills');   });
+at(T.coAll,      () => { show('co-all');      });
+
+// S3 PROMPT 1
+const PROMPT1 = "Analyze my LinkedIn profile and give me a one-page assessment of my strengths, weaknesses, and top improvements I should make to attract my ideal connections.";
+at(T.prompt1In,  () => { switchSec('s-prompt1', 400); });
+at(T.prompt1Pre, () => { show('pl1'); });
+typeText('pt1', PROMPT1, T.prompt1Type - 0, 18, null);
+
+// S4 SCORE TABLE
+at(T.scoresIn,  () => { switchSec('s-scores', 500); });
+at(T.scoreH,    () => { show('score-h'); });
+at(T.sr1,   () => { show('sr-photo');    });
+at(T.sr2,   () => { show('sr-about');   });
+at(T.sr3,   () => { show('sr-activity');});
+at(T.sr4,   () => { show('sr-exp');     });
+at(T.sr5,   () => { show('sr-edu');     });
+at(T.sr6,   () => { show('sr-cert');    });
+at(T.sr7,   () => { show('sr-photo2');  });
+at(T.hsCallout, () => { show('hs-callout'); });
+at(T.twoX,      () => { show('two-x');  });
+
+// S5A BREAK 2
+at(T.break2In,   () => { switchSec('s-break2', 400); });
+at(T.break2Anim, () => { show('bn2'); show('bt2'); show('bs2'); });
+
+// S6 MORRIS
+at(T.morrisIn,  () => { switchSec('s-morris', 500); });
+at(T.sl1,  () => { show('sl1'); });
+at(T.sl2,  () => { at(400, () => show('sl2')); });
+at(T.sl3,  () => { show('sl3'); });
+at(T.sl4,  () => { show('sl4'); });
+
+// S5B BREAK 3
+at(T.break3In,   () => { switchSec('s-break3', 400); });
+at(T.break3Anim, () => { show('bn3'); show('bt3'); show('bs3'); });
+
+// S7 ADVANTAGE
+at(T.advIn,    () => { switchSec('s-advantage', 400); });
+at(T.advPre,   () => { show('ap'); });
+at(T.advTitle, () => { show('at'); });
+at(T.advSub,   () => { show('as'); });
+
+// S8 PROMPT 3
+const PROMPT3 = "Analyze this person's education, work history, posts, about section, and other aspects of their LinkedIn or Google profile — and create a one-page intelligence briefing that tells me the best way to engage, connect with, and interest this person into starting a LinkedIn relationship with me. Suggest a short message I could send them.";
+at(T.prompt3In,  () => { switchSec('s-prompt3', 400); });
+at(T.prompt3Pre, () => { show('p3pre'); });
+typeText('pt3', PROMPT3, T.prompt3Type - 0, 12, null);
+
+// S9 CALCULATING
+at(T.calcIn,   () => { switchSec('s-calc', 300); });
+at(T.calcAnim, () => { show('ci'); show('cl'); show('cd'); show('cs'); show('cbw'); });
+
+// S10 ANALYSIS
+at(T.analysisIn, () => { switchSec('s-analysis', 400); });
+at(T.ah,   () => { show('ah'); });
+at(T.ac1,  () => { show('ac1'); });
+at(T.ac2,  () => { at(200, () => show('ac2')); });
+at(T.ac3,  () => { show('ac3'); });
+at(T.ac4,  () => { at(200, () => show('ac4')); });
+at(T.amsg, () => { show('amsg'); });
+
+// S11 FINAL PUNCH
+at(T.finalIn, () => { switchSec('s-final', 400); });
+at(T.fl1,  () => { show('fl1'); });
+at(T.fl2,  () => { show('fl2'); });
+at(T.fcw,  () => { show('fcw'); });
+
+// FADE OUT
+at(T.fadeOut, () => { show('fade'); });
+
+</script>
+</body>
+</html>

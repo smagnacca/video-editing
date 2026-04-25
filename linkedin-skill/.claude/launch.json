@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "linkedin-composition",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4200", "composition"],
+      "port": 4200
+    }
+  ]
+}

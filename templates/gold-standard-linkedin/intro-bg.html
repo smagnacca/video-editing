@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1920px; height:1080px; overflow:hidden;
+  background:#0a0e1a;
+  font-family:'Inter',system-ui,sans-serif; color:#fff;
+}
+.sec {
+  position:absolute; width:1920px; height:1080px;
+  display:flex; flex-direction:column;
+  align-items:flex-start; justify-content:center;
+  padding:0 160px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.6s;
+}
+.sec.on { opacity:1; }
+
+/* PIP placeholder — keeps content from overlapping where avatar will sit */
+.pip-zone {
+  position:absolute; top:40px; right:40px;
+  width:320px; height:180px;
+}
+
+/* Gold / cyan tokens */
+.gold { color:#f5a623; }
+.cyan { color:#00d4ff; }
+.gold-line { display:block; height:4px; background:linear-gradient(90deg,#f5a623,#00d4ff); border-radius:2px; margin:20px 0 28px; }
+
+/* Watermark */
+.wm {
+  position:absolute; bottom:38px; right:60px;
+  font-size:22px; font-weight:600;
+  color:rgba(255,255,255,0.3); letter-spacing:0.06em;
+}
+
+/* Particle canvas */
+canvas { position:absolute; inset:0; pointer-events:none; }
+
+/* ── SECTION 1: Name card (0-6s) ── */
+.s1-label {
+  font-size:22px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase;
+  color:#00d4ff;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s, transform 0.5s;
+}
+.s1-label.on { opacity:1; transform:translateY(0); }
+.s1-name {
+  font-size:104px; font-weight:900; line-height:0.9;
+  letter-spacing:-0.02em;
+  opacity:0; transform:translateY(24px);
+  transition:opacity 0.5s 0.15s, transform 0.5s 0.15s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s1-name.on { opacity:1; transform:translateY(0); }
+.s1-title {
+  font-size:32px; font-weight:600; color:rgba(255,255,255,0.6);
+  margin-top:12px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.s1-title.on { opacity:1; transform:translateY(0); }
+
+/* ── SECTION 2: Credentials (6-17s) ── */
+.s2-row {
+  display:flex; align-items:center; gap:80px; width:100%;
+}
+.s2-stat {
+  text-align:center;
+  opacity:0; transform:scale(0.7);
+  transition:opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s2-stat.on { opacity:1; transform:scale(1); }
+.s2-stat .num {
+  font-size:140px; font-weight:900; line-height:0.85;
+  color:#f5a623;
+  text-shadow:0 0 40px rgba(245,166,35,0.55), 0 0 80px rgba(245,166,35,0.25);
+}
+.s2-stat .lbl {
+  font-size:26px; font-weight:600; color:rgba(255,255,255,0.55);
+  max-width:260px; line-height:1.3; margin-top:8px;
+}
+.s2-right { flex:1; }
+.s2-badge {
+  display:flex; align-items:center; gap:16px;
+  padding:18px 28px;
+  border-left:4px solid #f5a623;
+  margin-bottom:20px;
+  opacity:0; transform:translateX(30px);
+  transition:opacity 0.4s, transform 0.4s;
+}
+.s2-badge.on { opacity:1; transform:translateX(0); }
+.s2-badge .b-school {
+  font-size:34px; font-weight:900; color:#fff;
+}
+.s2-badge .b-sub {
+  font-size:20px; font-weight:500; color:rgba(255,255,255,0.5);
+}
+.s2-years {
+  font-size:28px; font-weight:700; color:rgba(255,255,255,0.65);
+  margin-top:8px;
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.5s 0.5s, transform 0.5s 0.5s;
+}
+.s2-years.on { opacity:1; transform:translateY(0); }
+
+/* ── SECTION 3: Practical AI (17-29s) ── */
+.s3-pre {
+  font-size:28px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:#00d4ff;
+  opacity:0; transition:opacity 0.5s;
+}
+.s3-pre.on { opacity:1; }
+.s3-title {
+  font-size:128px; font-weight:900; line-height:0.88;
+  color:#f5a623;
+  text-shadow:0 0 50px rgba(245,166,35,0.5), 0 0 100px rgba(245,166,35,0.2);
+  opacity:0; transform:scale(0.82);
+  transition:opacity 0.5s 0.1s, transform 0.6s 0.1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s3-title.on { opacity:1; transform:scale(1); }
+.s3-sub {
+  font-size:38px; font-weight:600; color:rgba(255,255,255,0.65);
+  max-width:900px; line-height:1.3; margin-top:16px;
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.s3-sub.on { opacity:1; transform:translateY(0); }
+.s3-trio {
+  display:flex; gap:24px; margin-top:28px;
+}
+.s3-chip {
+  padding:12px 28px;
+  border:2px solid rgba(245,166,35,0.5);
+  border-radius:40px;
+  font-size:22px; font-weight:700; color:#f5a623;
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.4s, transform 0.4s;
+}
+.s3-chip.on { opacity:1; transform:translateY(0); }
+
+/* fade layer */
+.fade { position:absolute; inset:0; background:#0a0e1a; z-index:100; opacity:0; pointer-events:none; transition:opacity 0.8s; }
+.fade.on { opacity:1; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- SECTION 1: Name card -->
+<div class="sec" id="s1">
+  <div class="pip-zone"></div>
+  <div class="s1-label" id="s1l">Sales Performance Coach</div>
+  <div class="gold-line" style="width:120px;margin-top:14px;margin-bottom:22px;opacity:0;transition:opacity 0.5s 0.1s" id="s1gl"></div>
+  <div class="s1-name" id="s1n">Scott<br><span class="gold">Magnacca</span></div>
+  <div class="s1-title" id="s1t">Practical AI Expert &nbsp;·&nbsp; Babson &amp; Harvard &nbsp;·&nbsp; salesforlife.ai</div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<!-- SECTION 2: Credentials -->
+<div class="sec" id="s2">
+  <div class="pip-zone"></div>
+  <div class="s2-row">
+    <div class="s2-stat" id="s2st">
+      <div class="num">$1B+</div>
+      <div class="lbl">in financial services<br>revenue generated</div>
+    </div>
+    <div class="s2-right">
+      <div class="s2-badge" id="s2b1">
+        <div>
+          <div class="b-school">Babson College</div>
+          <div class="b-sub">Science of Entrepreneurship &amp; Persuasion</div>
+        </div>
+      </div>
+      <div class="s2-badge" id="s2b2">
+        <div>
+          <div class="b-school">Harvard University</div>
+          <div class="b-sub">Science of Persuasion &amp; Business Growth</div>
+        </div>
+      </div>
+      <div class="s2-years" id="s2y">30 Years Building High-Performance Sales Teams</div>
+    </div>
+  </div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<!-- SECTION 3: Practical AI -->
+<div class="sec" id="s3">
+  <div class="pip-zone"></div>
+  <div class="s3-pre" id="s3p">100% Focused On Teaching</div>
+  <div class="s3-title" id="s3t">Practical<br>AI</div>
+  <div class="s3-sub" id="s3s">Maximizing Productivity, Profits &amp; Performance<br>for Individuals and Organizations</div>
+  <div class="s3-trio">
+    <div class="s3-chip" id="sc1">Productivity</div>
+    <div class="s3-chip" id="sc2">Profits</div>
+    <div class="s3-chip" id="sc3">Performance</div>
+  </div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<div class="fade" id="fade"></div>
+
+<script>
+// Particle canvas
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = 1920; canvas.height = 1080;
+const particles = Array.from({length:55}, () => ({
+  x: Math.random()*1920, y: Math.random()*1080,
+  r: Math.random()*2+0.5,
+  vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+  a: Math.random()*0.4+0.1,
+  gold: Math.random() > 0.5
+}));
+function drawParticles() {
+  ctx.clearRect(0,0,1920,1080);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = p.gold ? `rgba(245,166,35,${p.a})` : `rgba(0,212,255,${p.a})`;
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0) p.x=1920; if(p.x>1920) p.x=0;
+    if(p.y<0) p.y=1080; if(p.y>1080) p.y=0;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+function show(id) { document.getElementById(id).classList.add('on'); }
+function at(ms, fn) { setTimeout(fn, ms); }
+
+function switchSec(id, fadeMs=500) {
+  document.querySelectorAll('.sec').forEach(s => { s.style.transition=`opacity ${fadeMs}ms`; s.classList.remove('on'); });
+  setTimeout(() => { document.getElementById(id).style.transition=`opacity ${fadeMs}ms`; document.getElementById(id).classList.add('on'); }, fadeMs/2);
+}
+
+// ── TIMELINE ──
+// S1: 0-6s (name card)
+at(0,    () => switchSec('s1', 0));
+at(100,  () => show('s1l'));
+at(200,  () => { document.getElementById('s1gl').style.opacity='1'; });
+at(350,  () => show('s1n'));
+at(600,  () => show('s1t'));
+
+// S2: 6-17s (credentials)
+at(5800, () => switchSec('s2', 500));
+at(6400, () => show('s2st'));
+at(7000, () => show('s2b1'));
+at(8200, () => show('s2b2'));
+at(9800, () => show('s2y'));
+
+// S3: 17-29s (Practical AI)
+at(16800, () => switchSec('s3', 500));
+at(17400, () => show('s3p'));
+at(17700, () => show('s3t'));
+at(18600, () => show('s3s'));
+at(19800, () => { show('sc1'); setTimeout(()=>show('sc2'),200); setTimeout(()=>show('sc3'),400); });
+
+// Fade out at 29.5s
+at(29200, () => show('fade'));
+</script>
+</body>
+</html>

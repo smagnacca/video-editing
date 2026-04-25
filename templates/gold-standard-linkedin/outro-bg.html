@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1920px; height:1080px; overflow:hidden;
+  background:#0a0e1a;
+  font-family:'Inter',system-ui,sans-serif; color:#fff;
+}
+.sec {
+  position:absolute; width:1920px; height:1080px;
+  display:flex; flex-direction:column;
+  align-items:flex-start; justify-content:center;
+  padding:0 160px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.6s;
+}
+.sec.on { opacity:1; }
+.pip-zone { position:absolute; top:40px; right:40px; width:320px; height:180px; }
+.gold { color:#f5a623; }
+.cyan { color:#00d4ff; }
+.gold-line { display:block; height:4px; background:linear-gradient(90deg,#f5a623,#00d4ff); border-radius:2px; margin:20px 0 28px; }
+.wm { position:absolute; bottom:38px; right:60px; font-size:22px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:0.06em; }
+canvas { position:absolute; inset:0; pointer-events:none; }
+
+/* ── SECTION 1: Impact statement (0-10s) ── */
+.s1-pre {
+  font-size:28px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#00d4ff;
+  opacity:0; transition:opacity 0.5s;
+}
+.s1-pre.on { opacity:1; }
+.s1-line {
+  font-size:100px; font-weight:900; line-height:0.92; display:block;
+  opacity:0; transform:translateY(28px);
+  transition:opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s1-line.on { opacity:1; transform:translateY(0); }
+.s1-sub {
+  font-size:36px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:20px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s 0.25s, transform 0.5s 0.25s;
+}
+.s1-sub.on { opacity:1; transform:translateY(0); }
+
+/* ── SECTION 2: Upcoming class (11-22s) ── */
+.s2-pre {
+  font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#f5a623;
+  opacity:0; transition:opacity 0.5s;
+}
+.s2-pre.on { opacity:1; }
+.s2-headline {
+  font-size:72px; font-weight:900; line-height:0.95; margin-top:12px;
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.5s 0.1s, transform 0.5s 0.1s;
+}
+.s2-headline.on { opacity:1; transform:translateY(0); }
+.s2-items { margin-top:28px; }
+.s2-item {
+  display:flex; align-items:center; gap:18px;
+  font-size:30px; font-weight:600; color:rgba(255,255,255,0.8);
+  margin-bottom:16px;
+  opacity:0; transform:translateX(24px);
+  transition:opacity 0.4s, transform 0.4s;
+}
+.s2-item.on { opacity:1; transform:translateX(0); }
+.s2-item svg { flex-shrink:0; }
+.s2-triple {
+  margin-top:24px; padding:20px 32px;
+  background:rgba(245,166,35,0.1); border:2px solid #f5a623; border-radius:12px;
+  display:flex; align-items:center; gap:24px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s2-triple.on { opacity:1; transform:translateY(0); }
+.triple-num { font-size:96px; font-weight:900; color:#f5a623; line-height:1; text-shadow:0 0 30px rgba(245,166,35,0.5); }
+.triple-lbl { font-size:36px; font-weight:700; line-height:1.2; }
+
+/* ── SECTION 3: CTA (23-25.8s) ── */
+.s3-pre {
+  font-size:26px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#00d4ff;
+  opacity:0; transition:opacity 0.4s;
+}
+.s3-pre.on { opacity:1; }
+.s3-action {
+  font-size:88px; font-weight:900; line-height:0.9; margin-top:8px;
+  opacity:0; transform:scale(0.88);
+  transition:opacity 0.4s 0.1s, transform 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s3-action.on { opacity:1; transform:scale(1); }
+.s3-url {
+  font-size:40px; font-weight:700; color:#00d4ff; margin-top:20px;
+  letter-spacing:0.02em;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.4s 0.25s, transform 0.4s 0.25s;
+}
+.s3-url.on { opacity:1; transform:translateY(0); }
+
+.fade { position:absolute; inset:0; background:#0a0e1a; z-index:100; opacity:0; pointer-events:none; transition:opacity 0.8s; }
+.fade.on { opacity:1; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- S1: Impact statement -->
+<div class="sec" id="s1">
+  <div class="pip-zone"></div>
+  <div class="s1-pre" id="s1p">Just one new skill.</div>
+  <span class="gold-line" style="width:100px;opacity:0;transition:opacity 0.5s 0.1s;margin-top:16px;margin-bottom:20px" id="s1gl"></span>
+  <span class="s1-line" id="sl1">Applied <span class="gold">Consistently</span>…</span>
+  <span class="s1-line" id="sl2" style="transition-delay:0.2s">Changes <span style="color:#00d4ff">Everything.</span></span>
+  <div class="s1-sub" id="s1s">Your career. Your life. Your future.</div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<!-- S2: Upcoming class -->
+<div class="sec" id="s2">
+  <div class="pip-zone"></div>
+  <div class="s2-pre" id="s2p">In Our Upcoming Class</div>
+  <div class="s2-headline" id="s2h">Dozens of <span class="gold">AI Strategies</span><br>Like This One</div>
+  <div class="s2-items">
+    <div class="s2-item" id="si1">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Easy to understand — even if you're not technical
+    </div>
+    <div class="s2-item" id="si2">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Simple to apply — start using today
+    </div>
+    <div class="s2-item" id="si3">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Real results — from Day One
+    </div>
+  </div>
+  <div class="s2-triple" id="s2tr">
+    <div class="triple-num">3×</div>
+    <div class="triple-lbl">Your Productivity<br><span style="color:rgba(255,255,255,0.55);font-size:24px;font-weight:500">Guaranteed or your time back</span></div>
+  </div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<!-- S3: CTA -->
+<div class="sec" id="s3">
+  <div class="pip-zone"></div>
+  <div class="s3-pre" id="s3p">Take the next step →</div>
+  <div class="s3-action" id="s3a">Free <span class="gold">AI Skills</span> Quiz</div>
+  <div class="s3-url" id="s3u">practical-ai-skills-iq.netlify.app</div>
+  <div class="wm">salesforlife.ai</div>
+</div>
+
+<div class="fade" id="fade"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = 1920; canvas.height = 1080;
+const particles = Array.from({length:55}, () => ({
+  x:Math.random()*1920, y:Math.random()*1080,
+  r:Math.random()*2+0.5,
+  vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3,
+  a:Math.random()*0.4+0.1,
+  gold:Math.random()>0.5
+}));
+function drawP() {
+  ctx.clearRect(0,0,1920,1080);
+  particles.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.gold ? `rgba(245,166,35,${p.a})` : `rgba(0,212,255,${p.a})`;
+    ctx.fill();
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=1920; if(p.x>1920)p.x=0;
+    if(p.y<0)p.y=1080; if(p.y>1080)p.y=0;
+  });
+  requestAnimationFrame(drawP);
+}
+drawP();
+
+function show(id) { document.getElementById(id).classList.add('on'); }
+function at(ms,fn) { setTimeout(fn,ms); }
+function switchSec(id, ms=500) {
+  document.querySelectorAll('.sec').forEach(s=>{ s.style.transition=`opacity ${ms}ms`; s.classList.remove('on'); });
+  setTimeout(() => { document.getElementById(id).style.transition=`opacity ${ms}ms`; document.getElementById(id).classList.add('on'); }, ms/2);
+}
+
+// S1: 0-10s
+at(0,    () => switchSec('s1', 0));
+at(100,  () => show('s1p'));
+at(200,  () => { document.getElementById('s1gl').style.opacity='1'; });
+at(400,  () => show('sl1'));
+at(800,  () => show('sl2'));
+at(1800, () => show('s1s'));
+
+// S2: 11-22s
+at(10800, () => switchSec('s2', 500));
+at(11400, () => show('s2p'));
+at(11700, () => show('s2h'));
+at(12500, () => show('si1'));
+at(13500, () => show('si2'));
+at(14500, () => show('si3'));
+at(16200, () => show('s2tr'));
+
+// S3: 23-25.8s
+at(22800, () => switchSec('s3', 400));
+at(23200, () => show('s3p'));
+at(23500, () => show('s3a'));
+at(24200, () => show('s3u'));
+
+// Fade at end
+at(25400, () => show('fade'));
+</script>
+</body>
+</html>

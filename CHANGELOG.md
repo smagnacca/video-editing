@@ -896,3 +896,54 @@ Scott actually said MORE than the script — captured by Whisper (includes "free
 - Created `VIDEO-TEMPLATE.md` — reusable architecture reference for future videos
 - Created `CHANGELOG.md` (this file)
 - Added auto-memory entries: Remotion CSS restrictions, B-roll layout, Edge TTS fallback, script verification
+
+---
+
+## 2026-04-25 — LinkedIn Skill Video v3 — A+ First-Pass Approval
+
+### Project
+**"3 Practical AI Skills for LinkedIn Connections"** — 3:21 educational video
+Output: `output/linkedin-skill-v3-FINAL.mp4`
+Commit: see git log
+
+### Result
+Scott approved v3 as "perfect, spot on for everything" — first complete pass with avatar PIP.
+v1 approved visually on first render ("absolutely outstanding — excellent job — BRAVO!").
+v2 fixed audio levels. v3 added avatar PIP + smooth transitions.
+
+### What Was Built
+- **Pipeline:** Full HTML composition pipeline (no Remotion) — 11 sections, 2:24 middle
+- **Composition:** `linkedin-skill/composition/index.html` — 1147 lines, Whisper-anchored
+- **INTRO/OUTRO backgrounds:** `templates/gold-standard-linkedin/intro-bg.html` + `outro-bg.html`
+  — 3-beat background compositions keyed to Whisper timestamps of HeyGen avatar speech
+- **Avatar PIP:** 320×180 upper-right corner, gold `#f5a623` drawbox border, `-shortest` clip
+- **Audio fix:** `volume=3.0` + `amix normalize=0` + `loudnorm -14 LUFS` → max_volume -0.7 dBFS
+
+### Key Animations Used
+- Canvas particles (55, gold+cyan drift)
+- Ken Burns (background images, 3 variants: slow/right/left)
+- Spring physics entrances (`cubic-bezier(0.34,1.56,0.64,1)`)
+- Typewriter (prompt text, 12–18 chars/sec)
+- Dual-ring spinner (calculating section)
+- Progress bar fill (4.5s, keyframed)
+- Pulse dots (3-dot loading)
+- Gold glow on hero stats (`text-shadow` dual layer)
+- Staggered translateX/Y reveals on all lists
+
+### QA Fixes Applied Before Final Render
+1. Replaced `⚠` emoji with SVG warning triangle in score table
+2. Added gold glow to `1B+` hook stat and `2×` profile views callout
+3. Added box-shadow to callout boxes and cyan highlight to analysis card
+4. Corrected Morris section timing: 65.5s → 68s (was 4.6s too early per Whisper)
+
+### Best Practices Saved
+- `templates/gold-standard-linkedin/TEMPLATE-SPEC.md` — full A+ template spec
+- `memory/feedback_linkedin_video_pattern.md` — 11-step proven pipeline
+- `memory/pre_publish_qa_protocol.md` — added QA Check 5 (volumedetect) + QA Check 6 (PIP frame)
+- `memory/pitfalls.md` — Pitfall 16 (amix normalize) + Pitfall 17 (full-screen avatar)
+- `memory/MEMORY.md` — gold standard template pointer + 7 new hard rules
+
+### Next Steps
+- Record or generate v2 with topic-specific INTRO/OUTRO (current bumpers are generic practical-ai)
+- A/B test this video vs. the prior AI Buy-Back format
+- Apply this HTML pipeline template to the next course promo video
