@@ -2,6 +2,30 @@
 
 ---
 
+## 2026-04-25 — All Final Videos Pushed to GitHub (Permanent Backup)
+
+**Commits:** `3b1f0f3` (LinkedIn video + template), `2b08c01` (video backup)
+
+All 9 approved final output videos are now permanently stored in the GitHub repo under `output/`:
+
+| File | Size |
+|------|------|
+| `15-minute-sales-sprint-v7-FINAL.mp4` | 17MB |
+| `3-types-of-people-4.7.26-v2-final.mp4` | 44MB |
+| `3-types-of-people-4.7.26-v3-final.mp4` | 45MB |
+| `claude-cowork-sales-FINAL.mp4` | 15MB |
+| `claude-cowork-sales-v5.mp4` | 19MB |
+| `invisible-sign-v7-final.mp4` | 25MB |
+| `linkedin-skill-v1-FINAL.mp4` | 33MB |
+| `linkedin-skill-v3-FINAL.mp4` | 18MB |
+| `storyselling-ai-4.7.26-v2-final.mp4` | 26MB |
+
+Also committed: `templates/gold-standard-linkedin/REFERENCE-OUTPUT-v3.mp4` (gold standard reference render).
+
+`.gitignore` updated — `output/*.mp4` is now permanently whitelisted. **Going forward: every "FINAL" approved video is auto-pushed to GitHub at session end.**
+
+---
+
 ## 2026-04-24 — The AI Buy-Back: Premium HTML Composition (Session Postmortem)
 
 **Project:** `ai-buy-back/` — 3-4 min promotional video  
